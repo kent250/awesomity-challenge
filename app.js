@@ -7,9 +7,12 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
+const dbURI = process.env.DBURI
+
+//middleware section
 
 //db connection
-mongoose.connect(process.env.DBURI)
+mongoose.connect(dbURI)
     .then(()=>{
         app.listen(port, ()=>{
             console.log('Database Connected');
@@ -22,7 +25,7 @@ mongoose.connect(process.env.DBURI)
 
 
 
-
+// routes section
 app.get('/', (req, res) => {
     console.log("connected");
     res.end().status(200);
