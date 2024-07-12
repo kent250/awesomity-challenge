@@ -5,7 +5,7 @@ const authController = require('../controllers/authController');
 
 
 
-router.post('/auth/register', authController.userRegistration);
+router.post('/api/auth/register', authController.registerBuyer);
 
 
 
