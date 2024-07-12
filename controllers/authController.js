@@ -22,7 +22,13 @@ const registerBuyer = async (req, res) => {
           is_email_verified: false,
         });
   
-        res.status(201).json({ message: 'User registered successfully', user: newUser });
+        res.status(201).json({ message: 'User registered successfully', user: {
+          id: newUser.id,
+          name: newUser.name,
+          email: newUser.email,
+          role: newUser.role,
+          is_email_verified: newUser.is_email_verified
+        }});
       } catch (error) {
         console.error('Error creating user:', error);
         res.status(500).json({ message: 'Internal server error', error: error.message });

@@ -2,6 +2,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
+const { swaggerUi, specs } = require('./swagger');
 
 //files
 const { syncModels } = require('./config/sync');
@@ -15,6 +16,7 @@ const port = process.env.PORT || 3000;
 
 // Middlewares
 app.use(bodyParser.json());
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 
 syncModels().then(() => {
