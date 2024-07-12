@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { secret_key } = require('../config/jwt');
-const bcrypt = require('bcrypt');
+
 
 const authenticateToken = (req, res, next) => {
 
