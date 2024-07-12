@@ -138,8 +138,4 @@ router.post('/register/buyer', authController.registerBuyer);
  */
 router.post('/login', authController.login);
 
-
-
-
-
 module.exports = router;

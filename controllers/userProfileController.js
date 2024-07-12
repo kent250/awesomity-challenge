@@ -14,7 +14,7 @@ const profileDetails = async (req, res)=> {
       }});
     } catch (error) {
       console.log('Error Fetching profile', error);
-      res.satus(500).json({message: 'intenal server error', error: error.message});
+      res.satus(500).json({message: 'Internal server error', error: error.message});
     }
   }
   
