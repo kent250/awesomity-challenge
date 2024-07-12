@@ -10,6 +10,20 @@ const options = {
       version: '1.0.0',
       description: 'Online marketplace that allows users to buy and sell products, manage their inventory and process orders',
     },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
     servers: [
       {
         url: 'http://localhost:3000', // Change to your server URL
