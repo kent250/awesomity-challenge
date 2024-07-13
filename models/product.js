@@ -5,7 +5,8 @@ const { sequelize } = require('../config/database.js');
 const Product = sequelize.define('Product', {
     product_name: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     description: {
         type: DataTypes.TEXT,
