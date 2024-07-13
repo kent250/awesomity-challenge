@@ -56,7 +56,7 @@ const { authenticateToken, authorizeRole } = require('../middlewares/auth');
  *                         type: string
  *                         format: date-time
  *                         example: 2024-07-13T09:19:42.020Z
- *       404:
+ *       204:
  *         description: No categories found
  *         content:
  *           application/json:
