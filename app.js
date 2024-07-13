@@ -8,6 +8,7 @@ const { swaggerUi, specs } = require('./swagger');
 const { syncModels } = require('./config/sync');
 const authRoutes = require('./routes/authRoutes');
 const userProfileRoutes = require('./routes/userProfileRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ syncModels().then(() => {
   // Routes
     app.use('/api/auth', authRoutes);
     app.use('/api/user', userProfileRoutes);
+    app.use('/api', categoryRoutes);
 
 
 
