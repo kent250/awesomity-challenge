@@ -3,5 +3,5 @@ dotenv.config();
 
 module.exports = {
     secret_key: process.env.SECRET_KEY,
-    expiresIn: '1h'
+    expiration : '1h'
 }

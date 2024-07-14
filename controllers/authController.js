@@ -1,10 +1,15 @@
-const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const validator = require('validator');
-const jsend = require('../config/apiFormat');
 const jwt = require('jsonwebtoken');
-const { secret_key, expiresIn } = require('../config/jwt');
 
+const User = require('../models/user');
+const jsend = require('../config/apiFormat');
+const { secret_key, expiration } = require('../config/jwt');
+const sendVerification = require('../utils/sendEmails');
+
+
+const secrete_key = process.env.SECRET_KEY;
+const base_url =  process.env.BASE_URL + 'verify/';
 
 
 //register admin
@@ -56,14 +61,12 @@ const registerBuyer = async (req, res) => {
               email: trimmedEmail,
           }
         });
-
         if (emailExists) {
             return res.status(422).json(jsend('Fail', 'The Email already registered!'));
         }
 
         //hash password
         const hashedPswd = await bcrypt.hash(password, 10);
-        
 
         // Create a new user
         const newUser = await User.create({
@@ -73,14 +76,25 @@ const registerBuyer = async (req, res) => {
           role: 'buyer',
           is_email_verified: false,
         });
-  
-        res.status(201).json({ message: 'User registered successfully', user: {
+
+        if (!newUser) {
+          return res.status(422).json(jsend('Fail', 'Account not registered'));
+        }
+
+      //Send verification E-mail
+       const verification =  sendVerification(newUser.id, newUser.email, secrete_key, base_url);
+
+       if (!verification) {
+         console.log('verification email not sent');
+       }
+        res.status(201).json({ message: `Welcome! Check email ${newUser.email} to verify.`, user: {
           id: newUser.id,
           name: newUser.name,
           email: newUser.email,
           role: newUser.role,
           is_email_verified: newUser.is_email_verified
         }});
+
       } catch (error) {
         console.error('Error creating user:', error);
         res.status(500).json({ message: 'Internal server error', error: error.message });
@@ -95,7 +109,7 @@ const login = async (req, res)=>{
           const user = await User.findOne({ where: { email } });
       
           if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(422).json({ message: 'User not found' });
           }
       
           const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -105,7 +119,7 @@ const login = async (req, res)=>{
           }
       
           // Include the user's role in the JWT
-          const token = jwt.sign({ id: user.id, name:user.name, email: user.email, role: user.role }, secret_key, { expiresIn });
+          const token = jwt.sign({ id: user.id, name:user.name, email: user.email, role: user.role }, secret_key, { expiresIn: expiration });
       
           res.json({ token });
         } catch (error) {
