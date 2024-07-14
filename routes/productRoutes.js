@@ -366,6 +366,7 @@ router.patch('/product/:id', authenticateToken, authorizeRole(['admin']), produc
  */
 router.get('/product', authenticateToken, authorizeRole(['admin']), productController.retrieveAllProducts);
 
+
 router.patch('/product/featured/:id', authenticateToken, authorizeRole(['admin']), productController.makeProductFeatured);
 
 router.patch('/product/unfeatured/:id', authenticateToken, authorizeRole(['admin']), productController.makeProductNotFeatured);
