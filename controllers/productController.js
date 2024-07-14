@@ -61,7 +61,6 @@ const newProduct = async (req, res) => {
     }
 }
 
-
 const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
@@ -124,12 +123,98 @@ const updateProduct = async (req, res) => {
     }
 }
 
+const retrieveAllProducts = async (req, res) => {
+    try {
+        const getProducts = await Product.findAll({
+            include: [{
+                model: Category,
+                as: 'category',
+                attributes: ['id','name', 'description']
+            }]
+        });
 
-const deleteProduct = async (req, res) => {
-
+        if (getProducts.length <= 0) {
+            return res.status(200).json(jsend('Success', 'You have no products saved!!'));
+        }
+        res.status(200).json(jsend('Success', 'Products Retrieved Successfully', getProducts));
+    } catch (error) {
+        res.status(500).json(jsend('Fail', 'Internal Server error'));
+    }
 }
+
+const makeProductFeatured = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        //check if product is exist
+        const productExists = await Product.findByPk(id);
+        if (!productExists) {
+            return res.status(422).json(jsend('Fail', 'Valid Product ID is required!'));
+        }
+
+        //update product
+        const updateProduct = await Product.update(
+            { is_featured: true },
+            {
+                where : {
+                id: id
+            }
+        });
+
+        //if product not updated
+        if (!updateProduct) {
+            return res.status(422).json(jsend('Fail', 'Product is not featured'));
+        }
+        //retrieve updated product
+        const updatedProduct = await Product.findByPk(id);
+        res.status(200).json(jsend('Success', 'Product is featured successfully!', updatedProduct));
+
+
+    } catch (error) {
+        console.log('There was an error retrieving products');
+        res.status(500).json(jsend('Fail', 'Internal Server error'));
+    }
+}
+
+const makeProductNotFeatured = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        //check if product exists
+        const productExists = await Product.findByPk(id);
+        if (!productExists) {
+            return res.status(422).json(jsend('Fail', 'Valid Product ID is required!'));
+        }
+
+        //update product to un featured
+        const updateProduct = await Product.update(
+            { is_featured: false },
+            {
+                where : {
+                id: id
+            }
+        });
+
+        // if not updated
+        if (!updateProduct) {
+            return res.status(422).json(jsend('Fail', 'Product is not Unfeatured'));
+        }
+
+        //retrieve updated product
+        const updatedProduct = await Product.findByPk(id);
+        res.status(200).json(jsend('Success', 'Product is Unfeatured successfully!', updatedProduct));
+
+
+    } catch (error) {
+        res.status(500).json(jsend('Fail', 'Internal Server error'));
+    }
+}
+
 
 module.exports = {
     newProduct,
-    updateProduct
+    updateProduct,
+    retrieveAllProducts,
+    makeProductFeatured,
+    makeProductNotFeatured
 }
