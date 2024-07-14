@@ -9,6 +9,7 @@ const { syncModels } = require('./config/sync');
 const authRoutes = require('./routes/authRoutes');
 const userProfileRoutes = require('./routes/userProfileRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
+const productRoutes = require('./routes/productRoutes');
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ syncModels().then(() => {
     app.use('/api/auth', authRoutes);
     app.use('/api/user', userProfileRoutes);
     app.use('/api', categoryRoutes);
+    app.use('/api', productRoutes);
 
 
 
