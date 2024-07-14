@@ -1,5 +1,7 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const validator = require('validator');
+const jsend = require('../config/apiFormat');
 const jwt = require('jsonwebtoken');
 const { secret_key, expiresIn } = require('../config/jwt');
 
@@ -38,14 +40,35 @@ const registerAdmin = async (req, res) => {
 const registerBuyer = async (req, res) => {
     try {
         const { name, email, password} = req.body;
-        
+
+        //trim email address
+        const trimmedEmail = email.trim();
+
+        //validate email given
+        const validateEmail = validator.isEmail(trimmedEmail);
+        if (!validateEmail) {
+          return res.status(422).json(jsend('Fail', 'Please enter a valid email address.'));
+        }
+
+        //check if there if email exists
+        const emailExists = await User.findOne({
+          where: {
+              email: trimmedEmail,
+          }
+        });
+
+        if (emailExists) {
+            return res.status(422).json(jsend('Fail', 'The Email already registered!'));
+        }
+
         //hash password
         const hashedPswd = await bcrypt.hash(password, 10);
+        
 
         // Create a new user
         const newUser = await User.create({
           name,
-          email,
+          email: trimmedEmail,
           password:hashedPswd,
           role: 'buyer',
           is_email_verified: false,
