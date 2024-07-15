@@ -137,5 +137,103 @@ router.post('/register/buyer', authController.registerBuyer);
  *                   example: Error logging in
  */
 router.post('/login', authController.login);
+/**
+ * @swagger
+ * /api/auth/verify/{token}:
+ *   get:
+ *     summary: Verify buyer account
+ *     description: Verify a buyer's account using the provided token. This route should only be accessed by logged-in buyers.
+ *     tags: [Authentication]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The verification token sent to the buyer's email
+ *     responses:
+ *       200:
+ *         description: Account verified successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: Success
+ *                 message:
+ *                   type: string
+ *                   example: Account verified successfully, Login again
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 1
+ *                     name:
+ *                       type: string
+ *                       example: John Doe
+ *                     email:
+ *                       type: string
+ *                       example: john@example.com
+ *       401:
+ *         description: Unauthorized - Invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: Fail
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized: JsonWebTokenError"
+ *       403:
+ *         description: Forbidden - User is not a buyer
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: Fail
+ *                 message:
+ *                   type: string
+ *                   example: User not found
+ *       422:
+ *         description: Account verification failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: Fail
+ *                 message:
+ *                   type: string
+ *                   example: Your account wasn't verified. Try again in a moment
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: Fail
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
+router.get('/verify/:token', authenticateToken, authorizeRole(['buyer']), authController.verifyBuyerAccount);
 
 module.exports = router;

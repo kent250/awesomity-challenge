@@ -9,7 +9,7 @@ const sendVerification = require('../utils/sendEmails');
 
 
 const secrete_key = process.env.SECRET_KEY;
-const base_url =  process.env.BASE_URL + 'verify/';
+const base_url =  process.env.BASE_URL;
 
 
 //register admin
@@ -101,6 +101,54 @@ const registerBuyer = async (req, res) => {
       }
 }
 
+//verify buyer account 
+const verifyBuyerAccount = async (req, res) => {
+  try {
+    //Get and verify given token check if its legit
+    const { token } = req.params;
+
+    jwt.verify(token, secrete_key, async (err, decoded) => {
+      if (err) {
+        console.error('Error verifying JWT', err.name);
+        return res.status(401).json(jsend('Fail', `Unauthorized: ${err.name}`));
+      }
+
+ 
+        //Try to update user and return updated rows, and updated user details
+      try {
+        const [updatedRows, [updatedUser]] = await User.update(
+          { is_email_verified: true },
+          {
+            where: { id: decoded.userId },
+            returning: true
+          }
+        );
+
+        if (updatedRows === 0) {
+          return res.status(422).json(jsend('Fail', 'Your account wasn\'t verified. Try again in a moment'));
+        }
+
+        if (!updatedUser) {
+          return res.status(404).json(jsend('Fail', 'User not found'));
+        }
+
+        return res.status(200).json(jsend('Success', 'Account verified successfully, Login again', 
+          { id: updatedUser.id, 
+            name: updatedUser.name,
+            email: updatedUser.email
+          }
+        ));
+      } catch (error) {
+        console.error('Database error:', error);
+        return res.status(500).json(jsend('Fail', 'Internal server error'));
+      }
+    });
+  } catch (error) {
+    console.error('Internal server error:', error);
+    return res.status(500).json(jsend('Fail', 'Internal server error'));
+  }
+};
+
 //login
 const login = async (req, res)=>{
     
@@ -133,5 +181,6 @@ const login = async (req, res)=>{
 module.exports = {
     registerBuyer,
     registerAdmin,
-    login
+    login,
+    verifyBuyerAccount
 }

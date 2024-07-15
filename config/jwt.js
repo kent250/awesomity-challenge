@@ -3,5 +3,5 @@ dotenv.config();
 
 module.exports = {
     secret_key: process.env.SECRET_KEY,
-    expiration : '1h'
+    expiration : process.env.JWT_USER_EXPIRE_TIME
 }

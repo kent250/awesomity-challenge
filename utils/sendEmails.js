@@ -12,10 +12,10 @@ const sendVerification = (userId, userEmail, secret_key, baseUrl) => {
             {
                 userId: userId,
                 userEmail: userEmail
-            }, secret_key, {expiresIn: '10min'});
+            }, secret_key, {expiresIn: process.env.VERIFICATION_EMAIL_EXPIRE_TIME});
 
         //make base url+attach token
-        const urlToSend = baseUrl + token;
+        const urlToSend = baseUrl +"api/auth/verify/"+ token;
 
         //send verification email
         const mailOptions = {
@@ -27,8 +27,6 @@ const sendVerification = (userId, userEmail, secret_key, baseUrl) => {
         const confirmSend = transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.log(error);
-            }else{
-                console.log(info.response);
             }
         });
 

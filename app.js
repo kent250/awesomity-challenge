@@ -32,53 +32,8 @@ syncModels().then(() => {
     app.use('/api', productRoutes);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     app.get('/verify/:token', (req, res) => {
-      const { token } = req.params;
-      try {
-        jwt.verify(token, 'sdfjdhsjhfjshdjhjkhsjkhdskdjkhsfhjkhkjhsdkdjkhfsk', (err, decoded)=>{
-          res.json(decoded);
-        });
-
-      } catch (error) {
-        console.log('Internal server error');
-        res.status(500).json({message: 'internal server error'});
-      }
+      
       
     });
 
