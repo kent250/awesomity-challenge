@@ -345,7 +345,7 @@ router.patch('/product/:id', authenticateToken, authorizeRole(['admin']), produc
  *                       example: Success
  *                     message:
  *                       type: string
- *                       example: You have no products saved
+ *                       example: 0 products saved
  *       401:
  *         description: Unauthorized - Invalid or missing token
  *       403:

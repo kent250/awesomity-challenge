@@ -51,7 +51,7 @@ const { authenticateToken, authorizeRole } = require('../middlewares/auth');
  *       500:
  *         description: Internal server error
  */
-router.post('/register/admin', authenticateToken, authorizeRole(['admin']), authController.registerAdmin);
+router.post('/register/admin', authController.registerAdmin);
 
 /**
  * @swagger
@@ -137,6 +137,7 @@ router.post('/register/buyer', authController.registerBuyer);
  *                   example: Error logging in
  */
 router.post('/login', authController.login);
+
 /**
  * @swagger
  * /api/auth/verify/{token}:
@@ -234,6 +235,6 @@ router.post('/login', authController.login);
  *                   type: string
  *                   example: Internal server error
  */
-router.get('/verify/:token', authenticateToken, authorizeRole(['buyer']), authController.verifyBuyerAccount);
+router.get('/verify/:token', authController.verifyBuyerAccount);
 
 module.exports = router;

@@ -65,7 +65,7 @@ const { authenticateToken, authorizeRole } = require('../middlewares/auth');
  *               properties:
  *                 status:
  *                   type: string
- *                   example: Fail
+ *                   example: Success
  *                 message:
  *                   type: string
  *                   example: No categories Found
