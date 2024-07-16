@@ -21,7 +21,7 @@ const setupAssociations = () => {
 
     //OrderDetails-Product relationship
     OrderItems.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
-    Product.hasMany(OrderItems, { foreignKey: 'product_id', as: 'OrderItems' });
+    Product.hasMany(OrderItems, { foreignKey: 'product_id', as: 'orderItems' });
     
 
 };

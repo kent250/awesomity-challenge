@@ -4,6 +4,7 @@ const Order = require('../models/order');
 const User = require('../models/user');
 const Product = require('../models/product');
 const OrderItems = require('../models/orderItems');
+const { where } = require('sequelize');
 
 const makeOrder = async (req, res) => {
     let t;
@@ -107,10 +108,73 @@ const retrieveOrders = async (req, res) => {
       console.error('Internal server error:', error);
       return res.status(500).json(jsend('Fail', 'Internal server error'));
     }
-  };
-  
+}
+
+const orderDetails = async (req, res) => {
+    try {
+       const loggedInUser = req.user.id;
+       const loggedInUserRole = req.user.role;
+       const orderId = req.params.id;
+
+      // retrieve order
+      const checkOrder = await Order.findByPk(orderId);
+
+       if(!checkOrder) {
+        return res.status(404).json(jsend('Fail', 'Order not found'));
+       }
+
+       // Check if the user is authorized to view this order
+       if (loggedInUserRole !== 'admin' && checkOrder.buyer_id !== loggedInUser) {
+        return res.status(403).json(jsend('Fail', 'You are not authorized to view this order'));
+    }
+
+       // retrieve an order with its all items
+       const retrieveOrder = await Order.findOne({
+          where: {
+            id: orderId
+          },
+          include: [{
+            model: OrderItems,
+            as: 'orderItems',
+            include: [{
+              model: Product,
+              as: 'product',
+              attributes: ['id', 'product_name', 'description']        
+            }]
+          }]
+       });
+
+       // Process the data
+       const itemsDetails = retrieveOrder.orderItems.map(item => ({
+        productId: item.product.id,
+        productName: item.product.product_name,
+        productDescription: item.product.description,
+        quantity: item.quantity,
+        unitPrice: item.unit_price,
+        totalPrice: item.quantity * item.unit_price
+      }));
+
+      const totalOrderAmount = itemsDetails.reduce((sum, item) => sum + item.totalPrice, 0);
+
+      // Format the response
+      const orderDetails = {
+        order_id: retrieveOrder.id,
+        order_date: retrieveOrder.createdAt,
+        total_amount: totalOrderAmount,
+        items: itemsDetails
+      };
+
+       res.status(200).json(jsend('Success', 'Order details retrieved successfully', orderDetails));
+
+    } catch (error) { 
+        console.error('Internal server error:', error);
+        return res.status(500).json(jsend('Fail', 'Internal server error'));
+    }
+}
+
 
 module.exports = {
     makeOrder,
-    retrieveOrders
+    retrieveOrders,
+    orderDetails
 };

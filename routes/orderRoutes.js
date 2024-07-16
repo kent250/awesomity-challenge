@@ -8,6 +8,7 @@ router.post('/orders/', authenticateToken, authorizeRole(['buyer']) , orderContr
 
 router.get('/orders/', authenticateToken, authorizeRole(['buyer', 'admin']) , orderController.retrieveOrders);
 
+router.get('/orders/:id', authenticateToken, authorizeRole(['buyer', 'admin']), orderController.orderDetails);
 
 
 
