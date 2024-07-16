@@ -3,7 +3,6 @@ const { secret_key } = require('../config/jwt');
 
 
 const authenticateToken = (req, res, next) => {
-
     //get authorization header which contain authentication credentials
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -13,7 +12,9 @@ const authenticateToken = (req, res, next) => {
     }
 
     jwt.verify(token, secret_key, (err, user) => {
-        if (err) return res.sendStatus(403);
+        if (err) {
+          return res.sendStatus(403);
+        }
         req.user = user;
         next();
     });
@@ -22,11 +23,18 @@ const authenticateToken = (req, res, next) => {
 // New function for role-based authorization
 const authorizeRole = (roles) => {
   return (req, res, next) => {
-    if (!req.user) return res.sendStatus(401);
-    if (!roles.includes(req.user.role)) return res.sendStatus(403);
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+    // Check if the user's role is included in the allowed roles
+    if (!roles.includes(req.user.role)) {
+      return res.sendStatus(403);
+    }
     next();
   };
 };
+
+module.exports = authorizeRole;
 
 
 

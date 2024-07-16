@@ -14,6 +14,7 @@ const Order = sequelize.define('Order', {
     status: {
         type: DataTypes.STRING(15),
         allowNull: false,
+        defaultValue: 'pending',
         validate: {
             isIn: [['pending', 'paid', 'shipped', 'delivered', 'cancelled']],
         },

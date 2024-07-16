@@ -9,6 +9,14 @@ const Product = sequelize.define('Product', {
         unique: true,
         notEmpty: true,
     },
+    category_id: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: 'categories',
+            key: 'id'
+        },
+        allowNull: false
+    },
     description: {
         type: DataTypes.TEXT,
     },
@@ -24,14 +32,6 @@ const Product = sequelize.define('Product', {
     is_featured: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
-        allowNull: false
-    },
-    category_id: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: 'categories',
-            key: 'id'
-        },
         allowNull: false
     }
 
