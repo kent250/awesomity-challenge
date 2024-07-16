@@ -66,6 +66,51 @@ const makeOrder = async (req, res) => {
     }
 }
 
+const retrieveOrders = async (req, res) => {
+    try {
+      const loggedInUser = req.user.id;
+      const userRole = req.user.role;
+  
+      let retrieveOrders;
+  
+      if (userRole === 'admin') {
+        retrieveOrders = await Order.findAll({
+          order: [['createdAt', 'DESC']],
+        });
+      } else {
+        retrieveOrders = await Order.findAll({
+          order: [['createdAt', 'DESC']],
+          where: {
+            buyer_id: loggedInUser,
+          },
+        });
+      }
+  
+      if (!retrieveOrders) {
+        return res.status(422).json(jsend('Fail', 'There was an error retrieving orders'));
+      }
+  
+      if (retrieveOrders.length === 0) {
+        return res.status(200).json(jsend('Success', '0 Orders Found'));
+      }
+  
+      // Mapping to extract required information
+      const ordersData = retrieveOrders.map(order => ({
+        orderId: order.id,
+        status: order.status,
+        totalAmount: order.total_amount,
+        orderDate: order.createdAt,
+      }));
+  
+      return res.status(200).json(jsend('Success', 'Success retrieving orders', ordersData));
+    } catch (error) {
+      console.error('Internal server error:', error);
+      return res.status(500).json(jsend('Fail', 'Internal server error'));
+    }
+  };
+  
+
 module.exports = {
     makeOrder,
+    retrieveOrders
 };
