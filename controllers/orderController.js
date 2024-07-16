@@ -52,10 +52,11 @@ const makeOrder = async (req, res) => {
                 unit_price: product.unit_price
             }, { transaction: t });
 
-            // Update product stock (if needed)
+            // Update product stock
             await productAvailabilityCheck.decrement('stock_quantity', { by: product.quantity, transaction: t });
         }
 
+        // save done queries using transaction
         await t.commit();
         res.status(201).json(jsend('Success', { orderId: saveOrder.id, totalAmount }));
 
