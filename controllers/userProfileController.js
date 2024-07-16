@@ -62,10 +62,14 @@ const profileDetails = async (req, res)=> {
         }
       }
   
-      // Update user profile
+      // Update user profile & and if new email is provided also set verified to
       const updatedFields = {};
       if (name) updatedFields.name = name;
-      if (email) updatedFields.email = email;
+      if(email) {
+        updatedFields.email = email;
+        updatedFields.is_email_verified = false;
+      }
+
   
       await User.update(updatedFields, {
         where: {

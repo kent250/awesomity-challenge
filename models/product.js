@@ -6,7 +6,8 @@ const Product = sequelize.define('Product', {
     product_name: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+        unique: true,
+        notEmpty: true,
     },
     description: {
         type: DataTypes.TEXT,

@@ -3,6 +3,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const { swaggerUi, specs } = require('./swagger');
+const jwt = require('jsonwebtoken');
 
 //files
 const { syncModels } = require('./config/sync');
@@ -29,6 +30,57 @@ syncModels().then(() => {
     app.use('/api/user', userProfileRoutes);
     app.use('/api', categoryRoutes);
     app.use('/api', productRoutes);
+
+
+    app.get('/verify/:token', (req, res) => {
+      
+      
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
