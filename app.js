@@ -11,6 +11,7 @@ const authRoutes = require('./routes/authRoutes');
 const userProfileRoutes = require('./routes/userProfileRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const productRoutes = require('./routes/productRoutes');
+const orderRoutes = require('./routes/orderRoutes');
 
 dotenv.config();
 
@@ -30,56 +31,7 @@ syncModels().then(() => {
     app.use('/api/user', userProfileRoutes);
     app.use('/api', categoryRoutes);
     app.use('/api', productRoutes);
-
-
-    app.get('/verify/:token', (req, res) => {
-      
-      
-    });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    app.use('/api', orderRoutes);
 
 
 
