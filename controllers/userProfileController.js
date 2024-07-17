@@ -1,6 +1,8 @@
 const User = require('../models/user');
 const { Op } = require('sequelize');
 const bcrypt = require('bcrypt');
+const jsend = require('../config/apiFormat');
+
 
 
 //get user profile
@@ -19,7 +21,7 @@ const profileDetails = async (req, res)=> {
   }
   
   //edit user profile
-  const updateProfile = async (req, res) => {
+const updateProfile = async (req, res) => {
     try {
       const { name, email, currentPassword } = req.body;
       const userId = req.user.id;
@@ -88,13 +90,42 @@ const profileDetails = async (req, res)=> {
         }});
   
     } catch (error) {
-      console.log('Error updating profile!', error);
+      console.log('Internal server error', error);
       res.status(500).json({ message: 'Internal server error', error: error.message });
     }
   };
+
+//Get all system users 
+const getAllUsers = async (req, res) =>{
+  try {
+        const retrieveUsers =  await User.findAll();
+
+        if (!retrieveUsers) {
+          return res.status(400).json(jsend('Success', 'There is was problem retrieving users'));
+        }
+
+        if(retrieveUsers.length === 0){
+          res.status(200).json(jsend('Success', '0 Users returned'));
+        }
+
+        const formatUsers = retrieveUsers.map(user => ({
+          userId: user.id,
+          Names: user.name,
+          email: user.email,
+          role: user.role,
+          joinDate: user.createdAt
+        }))
+        res.status(200).json(jsend('Success', 'Successfully returned Users', formatUsers));
+
+  } catch (error) {
+    console.log('Internal server error', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+}
   
 
   module.exports = {
     profileDetails,
-    updateProfile
+    updateProfile,
+    getAllUsers
   }

@@ -147,5 +147,7 @@ router.get('/profile', authenticateToken, userProfileController.profileDetails);
  */
 router.patch('/profile', authenticateToken, userProfileController.updateProfile);
 
+router.get('/allusers',userProfileController.getAllUsers);
+
 
 module.exports = router;
