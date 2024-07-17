@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const jsend = require('../config/apiFormat');
 const { secret_key, expiration } = require('../config/jwt');
-const sendVerification = require('../utils/sendEmails');
+const sendEmails = require('../utils/sendEmails');
 
 
 const secrete_key = process.env.SECRET_KEY;
@@ -82,11 +82,8 @@ const registerBuyer = async (req, res) => {
         }
 
       //Send verification E-mail
-       const verification =  sendVerification(newUser.id, newUser.email, secrete_key, base_url);
+       const verification =  sendEmails.sendVerification(newUser.id, newUser.email, secrete_key, base_url);
 
-       if (!verification) {
-         console.log('verification email not sent');
-       }
         res.status(201).json({ message: `Welcome! Check email ${newUser.email} to verify.`, user: {
           id: newUser.id,
           name: newUser.name,
