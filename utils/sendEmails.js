@@ -5,7 +5,7 @@ const transporter = require('../config/emailTransporter');
 dotenv.config();
 
 //send Verification E-mail
-const sendVerification = (userId, userEmail, secret_key, baseUrl) => {
+const sendVerification = async (userId, userEmail, secret_key, baseUrl) => {
     try {
         //make E-mail token
         const token = jwt.sign(
@@ -16,7 +16,7 @@ const sendVerification = (userId, userEmail, secret_key, baseUrl) => {
 
         //make base url+attach token
         const urlToSend = baseUrl +"api/auth/verify/"+ token;
-
+            
         //send verification email
         const mailOptions = {
             to: userEmail,
@@ -36,11 +36,7 @@ const sendVerification = (userId, userEmail, secret_key, baseUrl) => {
     }    
 }
 
-const sendOrderStatusUpdate = (userEmail, userNames, orderStatus, orderId,  orderDate, totalAmount) => {
-    const date = new Date(orderDate);
-    const formattedDate = date.toISOString().slice(0, 19).replace('T', ' ');
-
-    
+const sendOrderStatusUpdate = async (userEmail, userNames, orderStatus, orderId,  orderDate, totalAmount) => {
     try {
          const mailOptions = {
             to: userEmail,
@@ -53,7 +49,7 @@ const sendOrderStatusUpdate = (userEmail, userNames, orderStatus, orderId,  orde
                     Order Details:
                     - Order Number: #${orderId}
                     - New Status: ${orderStatus}
-                    - Order Date: ${formattedDate}
+                    - Order Date: ${orderDate}
                     - Total Amount: Rwf ${totalAmount}
 
                     If you have any questions about your order, please don't hesitate to contact our customer support team.
@@ -74,5 +70,10 @@ const sendOrderStatusUpdate = (userEmail, userNames, orderStatus, orderId,  orde
     }
 }
 
-module.exports = sendVerification;
-module.exports = sendOrderStatusUpdate;
+// module.exports = sendVerification;
+// module.exports = sendOrderStatusUpdate;
+
+module.exports = {
+    sendVerification,
+    sendOrderStatusUpdate
+}
