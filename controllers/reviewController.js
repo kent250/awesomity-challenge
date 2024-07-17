@@ -6,7 +6,7 @@ const jsend = require('../config/apiFormat');
 const OrderItems = require('../models/orderItems');
 
 
-
+//create a review
 const createReview = async (req, res) => {
     try {
         //information gathering
@@ -60,11 +60,51 @@ const createReview = async (req, res) => {
     } catch (error) {
         console.log('Internal server error', error);
         res.status(500).json(jsend('Fail', 'Internal Server error'));
-        
+    }
+}
+
+//retrieve alll reviews for a product
+const retrieveReviews = async (req,res) => {
+    const productId = req.params.productId;
+    try {
+        const retrieveReviews = await Review.findAll({ 
+            where: {
+                product_id: productId
+            },
+            include: [{
+                model: Product,
+                as: 'product'
+            },
+            {
+                model: User,
+                as: 'user'
+            }]
+        });
+
+        if (!retrieveReviews) {
+            return res.status(500).json(jsend('Fail', 'There was an error retrieving reviews, try again later'))
+        }
+        const formattedReviews = {
+            productId: retrieveReviews[0].product.id,
+            productName: retrieveReviews[0].product.product_name,
+
+            review: retrieveReviews.map(review => ({
+                userNames: review.user.name,
+                rating: review.rating,
+                comment: review.comment
+            }))
+        };
+
+        res.json(jsend('Success', 'Product reviews retrieved successfully', formattedReviews));
+
+    } catch (error) {
+        console.log('Internal server error', error);
+        res.status(500).json(jsend('Fail', 'Internal Server error'));
     }
 }
 
 module.exports = {
-    createReview
+    createReview,
+    retrieveReviews
 }
 
