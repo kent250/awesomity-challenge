@@ -226,11 +226,58 @@ const updateOrderStatus = async (req, res) => {
     }
 }
 
+const viewOrderHistory = async (req, res) => {
+    const loggedInUserRole = req.user.role;
+    const loggedInUserId = req.user.id;
+
+  try {
+
+    const orders = await Order.findAll({
+        where: { buyer_id: loggedInUserId},
+        include: [
+          {
+            model: OrderItems,
+            as: 'orderItems',
+            include: [{
+              model: Product,
+              as: 'product',
+              attributes: ['product_name']
+            }]
+          }
+        ],
+        order: [['createdAt', 'DESC']]
+      });
+
+      const formattedOrders = orders.map(order => {
+        const orderItems = order.orderItems;
+        const productCount = orderItems.length;
+        const productNames = orderItems.map(item => item.product.product_name).join(', ');
+        const totalAmount = orderItems.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
+  
+        return {
+          orderId: order.id,
+          orderDate: order.createdAt,
+          status: order.status,
+          productCount: productCount,
+          productNames: productNames,
+          totalAmount: totalAmount
+        };
+      });
+
+      res.status(200).json(jsend('Sucess', 'Order Hisotry returned', formattedOrders));
+
+  } catch (error) {
+    console.error('Internal server error:', error);
+      return res.status(500).json(jsend('Fail', 'Internal server error'));
+  }
+}
+
 
 
 module.exports = {
     makeOrder,
     retrieveOrders,
     orderDetails,
-    updateOrderStatus
+    updateOrderStatus,
+    viewOrderHistory
 };
