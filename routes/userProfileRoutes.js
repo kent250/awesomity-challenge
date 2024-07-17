@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router();
 const userProfileController = require('../controllers/userProfileController');
-const { authenticateToken } = require('../middlewares/auth');
+const { authenticateToken,authorizeRole } = require('../middlewares/auth');
 
 /**
  * @swagger
@@ -147,7 +147,7 @@ router.get('/profile', authenticateToken, userProfileController.profileDetails);
  */
 router.patch('/profile', authenticateToken, userProfileController.updateProfile);
 
-router.get('/allusers',userProfileController.getAllUsers);
+router.get('/allusers',authenticateToken,authorizeRole(['admin']) ,userProfileController.getAllUsers);
 
 
 module.exports = router;
