@@ -12,12 +12,32 @@ const setupAssociations = () => {
     Category.hasMany(Product, { foreignKey: 'category_id', as: 'products' });
 
     //User-Order relationship 
-    Order.belongsTo(User, { foreignKey: 'buyer_id', as: 'buyer' });
-    User.hasMany(Order, { foreignKey: 'buyer_id', as: 'orders' });
+    Order.belongsTo(User, { 
+        foreignKey: 'buyer_id', 
+        as: 'buyer',
+        onDelete: 'CASCADE',
+        onUPDATE: 'CASCADE'
+    });
+    User.hasMany(Order, { 
+        foreignKey: 'buyer_id', 
+        as: 'orders',
+        onDelete: 'CASCADE',
+        onUPDATE: 'CASCADE'
+    });
 
-    //Order-OrderDetails relationship
-    OrderItems.belongsTo(Order, { foreignKey: 'order_id', as: 'order' });
-    Order.hasMany(OrderItems, { foreignKey: 'order_id', as: 'orderItems' });
+    //Order-Orderitems relationship
+    OrderItems.belongsTo(Order, {
+        foreignKey: 'order_id', 
+        as: 'order',
+        onDelete: 'CASCADE',
+        onUPDATE: 'CASCADE'
+    });
+    Order.hasMany(OrderItems, {
+        foreignKey: 'order_id',
+        as: 'orderItems',
+        onDelete: 'CASCADE',
+        onUPDATE: 'CASCADE'
+     });
 
     //OrderDetails-Product relationship
     OrderItems.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });

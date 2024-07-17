@@ -4,7 +4,10 @@ const Order = require('../models/order');
 const User = require('../models/user');
 const Product = require('../models/product');
 const OrderItems = require('../models/orderItems');
+const sendOrderStatusUpdate = require('../utils/sendEmails');
+
 const { where } = require('sequelize');
+const sendVerification = require('../utils/sendEmails');
 
 const makeOrder = async (req, res) => {
     let t;
@@ -172,9 +175,62 @@ const orderDetails = async (req, res) => {
     }
 }
 
+const updateOrderStatus = async (req, res) => {
+    try {
+      const orderId = req.params.id;
+      const { newStatus } = req.body;
+      const allowedStatuses = ['pending', 'paid', 'shipped', 'delivered', 'cancelled']
+
+      const normalizedNewStatus = newStatus.toLowerCase();
+      
+      //Check if user is authorised to access 
+      if(req.user.role !== 'admin') return res.status(403).json(jsend('Fail', 'You are not authorised'));
+      //check if status is legit
+      if(allowedStatuses.includes(normalizedNewStatus) !== true) return res.status(400).json(jsend('Fail', 'You are sending unknown order status'));
+      
+      //update the order status and also get required info from returned record
+      const [affectedRows, updatedRecords] = await Order.update(
+        { status: normalizedNewStatus },
+        {
+        where: {
+          id: orderId
+        },
+        returning: true,
+      });
+
+      const updatedOrder = updatedRecords[0];
+      
+      const orderDate = updatedOrder.createdAt
+      const orderAmount = updatedOrder.total_amount
+      const orderOwner = updatedOrder.buyer_id
+
+      if (updatedOrder.status === normalizedNewStatus) {
+        return res.status(400).json(jsend('Fail', `The order already has the status ${normalizedNewStatus}. No changes were made.`));
+      }
+   
+      const getOrderOwner = await User.findOne({ orderOwner });
+      const buyerEmail = getOrderOwner.email;
+      const buyerNames = getOrderOwner.name;
+
+      //send notification email
+      const sendEmail = sendOrderStatusUpdate(buyerEmail, buyerNames, normalizedNewStatus, orderId, orderDate, orderAmount)
+      if (!sendEmail) {
+        return res.status(400).json(jsend('Fail', 'The order Status has been updated but notification not sent'));
+      }
+      
+      // once all passed
+      res.status(200).json(jsend('Success', 'Order status updated, Notification E-mail sent', updatedOrder))
+    } catch (error) {
+      console.error('Internal server error:', error);
+      return res.status(500).json(jsend('Fail', 'Internal server error'));
+    }
+}
+
+
 
 module.exports = {
     makeOrder,
     retrieveOrders,
-    orderDetails
+    orderDetails,
+    updateOrderStatus
 };

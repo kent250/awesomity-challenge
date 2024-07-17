@@ -10,6 +10,8 @@ router.get('/orders/', authenticateToken, authorizeRole(['buyer', 'admin']) , or
 
 router.get('/orders/:id', authenticateToken, authorizeRole(['buyer', 'admin']), orderController.orderDetails);
 
+router.patch('/orders/:id', authenticateToken, authorizeRole(['admin']), orderController.updateOrderStatus);
+
 
 
 module.exports = router;

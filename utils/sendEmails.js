@@ -36,4 +36,43 @@ const sendVerification = (userId, userEmail, secret_key, baseUrl) => {
     }    
 }
 
+const sendOrderStatusUpdate = (userEmail, userNames, orderStatus, orderId,  orderDate, totalAmount) => {
+    const date = new Date(orderDate);
+    const formattedDate = date.toISOString().slice(0, 19).replace('T', ' ');
+
+    
+    try {
+         const mailOptions = {
+            to: userEmail,
+            subject: 'Order Status Update',
+            text: `
+                    Dear ${userNames},
+
+                    We are writing to inform you that the status of your order #${orderId} has been updated to ${orderStatus}.
+
+                    Order Details:
+                    - Order Number: #${orderId}
+                    - New Status: ${orderStatus}
+                    - Order Date: ${formattedDate}
+                    - Total Amount: Rwf ${totalAmount}
+
+                    If you have any questions about your order, please don't hesitate to contact our customer support team.
+
+                    Thank you for shopping with us!
+                  `
+        }
+
+        const confirmSend = transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+            }else{
+                console.log('Update email sent to buyer')
+            }
+        });
+    } catch (error) {
+         console.log('Internal Server error', error);
+    }
+}
+
 module.exports = sendVerification;
+module.exports = sendOrderStatusUpdate;
