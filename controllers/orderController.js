@@ -231,7 +231,6 @@ const viewOrderHistory = async (req, res) => {
     const loggedInUserId = req.user.id;
 
   try {
-
     const orders = await Order.findAll({
         where: { buyer_id: loggedInUserId},
         include: [

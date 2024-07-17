@@ -12,6 +12,7 @@ const userProfileRoutes = require('./routes/userProfileRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ syncModels().then(() => {
     app.use('/api', categoryRoutes);
     app.use('/api', productRoutes);
     app.use('/api', orderRoutes);
+    app.use('/api', reviewRoutes);
 
 
 
