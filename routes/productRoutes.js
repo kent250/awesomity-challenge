@@ -364,7 +364,10 @@ router.patch('/product/:id', authenticateToken, authorizeRole(['admin']), produc
  *                   type: string
  *                   example: Internal Server Error
  */
-router.get('/product', authenticateToken, authorizeRole(['admin']), productController.retrieveAllProducts);
+router.get('/product', productController.retrieveAllProducts);
+
+
+router.get('/product/category/:categoryId', productController.productsByCategory);
 
 
 router.patch('/product/featured/:id', authenticateToken, authorizeRole(['admin']), productController.makeProductFeatured);
