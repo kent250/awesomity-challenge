@@ -16,10 +16,8 @@ const { authenticateToken, authorizeRole } = require('../middlewares/auth');
  * /api/category:
  *   get:
  *     summary: Retrieve all categories
- *     description: Get a list of all categories (admin only)
+ *     description: Get a list of all categories
  *     tags: [Category]
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Categories retrieved successfully
@@ -68,11 +66,7 @@ const { authenticateToken, authorizeRole } = require('../middlewares/auth');
  *                   example: Success
  *                 message:
  *                   type: string
- *                   example: No categories Found
- *       401:
- *         description: Unauthorized - Invalid or missing token
- *       403:
- *         description: Forbidden - User is not an admin
+ *                   example: 0 categories Found
  *       500:
  *         description: Internal server error
  *         content:
@@ -86,8 +80,90 @@ const { authenticateToken, authorizeRole } = require('../middlewares/auth');
  *                 message:
  *                   type: string
  *                   example: There was an error retrieving all categories
+ *   
+ *   post:
+ *     summary: Create a new category
+ *     description: Create a new category (admin only)
+ *     tags: [Category]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: New Category
+ *               description:
+ *                 type: string
+ *                 example: Description of the new category
+ *     responses:
+ *       201:
+ *         description: Category created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: Success
+ *                 message:
+ *                   type: string
+ *                   example: Category created successfully!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 22
+ *                     name:
+ *                       type: string
+ *                       example: New Category
+ *                     description:
+ *                       type: string
+ *                       example: Description of the new category
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2024-07-13T10:30:00.000Z
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2024-07-13T10:30:00.000Z
+ *       400:
+ *         description: Bad request - Category already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: Fail
+ *                 message:
+ *                   type: string
+ *                   example: Valid Category name is required.
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: Fail
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
  */
-router.get('/category', authenticateToken, authorizeRole(['admin']),categoryController.retrieveCategories);
+router.get('/category', categoryController.retrieveCategories);
 
 /** 
  * @swagger
@@ -158,10 +234,6 @@ router.get('/category', authenticateToken, authorizeRole(['admin']),categoryCont
  *                 message:
  *                   type: string
  *                   example: Category already exists.
- *       401:
- *         description: Unauthorized - Invalid or missing token
- *       403:
- *         description: Forbidden - User is not an admin
  *       500:
  *         description: Internal server error
  *         content:
@@ -179,4 +251,4 @@ router.get('/category', authenticateToken, authorizeRole(['admin']),categoryCont
 router.post('/category', authenticateToken, authorizeRole(['admin']),categoryController.newCategory);
 
 
-module.exports = router;
+module.exports = router; 
