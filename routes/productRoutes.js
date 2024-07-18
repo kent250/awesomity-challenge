@@ -346,10 +346,6 @@ router.patch('/product/:id', authenticateToken, authorizeRole(['admin']), produc
  *                     message:
  *                       type: string
  *                       example: 0 products saved
- *       401:
- *         description: Unauthorized - Invalid or missing token
- *       403:
- *         description: Forbidden - User is not an admin
  *       500:
  *         description: Internal Server Error
  *         content:
@@ -367,12 +363,135 @@ router.patch('/product/:id', authenticateToken, authorizeRole(['admin']), produc
 router.get('/product', productController.retrieveAllProducts);
 
 
+/**
+ * @swagger
+ * /api/product/category/{categoryId}:
+ *   get:
+ *     summary: Retrieve products by category
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: categoryId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Products retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Product'
+ *       204:
+ *         $ref: '#/components/responses/NoProducts'
+ *       400:
+ *         $ref: '#/components/responses/CategoryNotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ * 
+ * components:
+ *   schemas:
+ *     Product:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         product_name:
+ *           type: string
+ *         category_id:
+ *           type: integer
+ *         description:
+ *           type: string
+ *         price:
+ *           type: number
+ *         stock_quantity:
+ *           type: integer
+ *         is_featured:
+ *           type: boolean
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *         category:
+ *           $ref: '#/components/schemas/Category'
+ *     
+ *     Category:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *         description:
+ *           type: string
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ * 
+ *   responses:
+ *     CategoryNotFound:
+ *       description: Category not found
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 example: "Fail"
+ *               message:
+ *                 type: string
+ *                 example: "Category Unknown"
+ *     
+ *     InternalServerError:
+ *       description: Internal server error
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 example: "Fail"
+ *               message:
+ *                 type: string
+ *                 example: "There was an error retrieving product details"
+ *     
+ *     NoProducts:
+ *       description: No products in the category
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 example: "Success"
+ *               message:
+ *                 type: string
+ *                 example: "0 Products in this category"
+ */
 router.get('/product/category/:categoryId', productController.productsByCategory);
 
 
 router.patch('/product/featured/:id', authenticateToken, authorizeRole(['admin']), productController.makeProductFeatured);
 
 router.patch('/product/unfeatured/:id', authenticateToken, authorizeRole(['admin']), productController.makeProductNotFeatured);
+
 
 
 

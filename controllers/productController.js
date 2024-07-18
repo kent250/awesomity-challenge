@@ -2,7 +2,7 @@ const Product = require('../models/product');
 const Category = require('../models/category');
 const jsend = require('../config/apiFormat');
 
-
+//new product
 const newProduct = async (req, res) => {
     try {
 
@@ -33,7 +33,7 @@ const newProduct = async (req, res) => {
         });
 
         if (checkProductName) {
-            return res.status(422).json(jsend('Fail', 'A product with this name already exists.'));
+            return res.status(400).json(jsend('Fail', 'A product with this name already exists.'));
         }
 
         //check if provided category exist if so generate error
@@ -43,7 +43,7 @@ const newProduct = async (req, res) => {
         }});
 
         if (!checkCategoryId) {
-            return res.status(422).json(jsend('Fail', 'The specified product category ID does not exist.'));
+            return res.status(400).json(jsend('Fail', 'The specified product category ID does not exist.'));
         }
 
         //save the product
@@ -235,7 +235,7 @@ const productsByCategory = async (req, res) => {
             return res.status(500).json(jsend('Fail', 'There was an error retriving product details'));
         }
         if (retrieveProducts.length === 0) {
-            return res.status(200).json(jsend('Success', '0 Products in this category'));
+            return res.status(204).json(jsend('Success', '0 Products in this category'));
         }
         
         return res.status(200).json(jsend('Success', `Products in category ${categoryId} retrieved successfully`, retrieveProducts));
