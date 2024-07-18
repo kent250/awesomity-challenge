@@ -149,7 +149,7 @@ const makeProductFeatured = async (req, res) => {
         //check if product is exist
         const productExists = await Product.findByPk(id);
         if (!productExists) {
-            return res.status(422).json(jsend('Fail', 'Valid Product ID is required!'));
+            return res.status(400).json(jsend('Fail', 'Valid Product ID is required!'));
         }
 
         //update product
@@ -163,7 +163,7 @@ const makeProductFeatured = async (req, res) => {
 
         //if product not updated
         if (!updateProduct) {
-            return res.status(422).json(jsend('Fail', 'Product is not featured'));
+            return res.status(400).json(jsend('Fail', 'Product is not featured'));
         }
         //retrieve updated product
         const updatedProduct = await Product.findByPk(id);
@@ -175,6 +175,7 @@ const makeProductFeatured = async (req, res) => {
         res.status(500).json(jsend('Fail', 'Internal Server error'));
     }
 }
+
 
 const makeProductNotFeatured = async (req, res) => {
     try {

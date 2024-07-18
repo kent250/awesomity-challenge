@@ -487,9 +487,181 @@ router.get('/product', productController.retrieveAllProducts);
 router.get('/product/category/:categoryId', productController.productsByCategory);
 
 
-
+/**
+ * @swagger
+ * /api/product/featured/{id}:
+ *   put:
+ *     summary: Make a product featured
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the product to be featured
+ *     responses:
+ *       200:
+ *         description: Product featured successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "Success"
+ *                 message:
+ *                   type: string
+ *                   example: "Product is featured successfully!"
+ *                 data:
+ *                   $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "Fail"
+ *                 message:
+ *                   type: string
+ *                   example: "Valid Product ID is required!"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "Fail"
+ *                 message:
+ *                   type: string
+ *                   example: "Internal Server error"
+ * 
+ * components:
+ *   schemas:
+ *     Product:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         product_name:
+ *           type: string
+ *         category_id:
+ *           type: integer
+ *         description:
+ *           type: string
+ *         price:
+ *           type: number
+ *         stock_quantity:
+ *           type: integer
+ *         is_featured:
+ *           type: boolean
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ */
 router.patch('/product/featured/:id', authenticateToken, authorizeRole(['admin']), productController.makeProductFeatured);
 
+/**
+ * @swagger
+ * /api/product/unfeature/{id}:
+ *   put:
+ *     summary: Make a product not featured
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the product to be unfeatured
+ *     responses:
+ *       200:
+ *         description: Product unfeatured successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "Success"
+ *                 message:
+ *                   type: string
+ *                   example: "Product is Unfeatured successfully!"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 1
+ *                     product_name:
+ *                       type: string
+ *                       example: "updated product"
+ *                     category_id:
+ *                       type: integer
+ *                       example: 2
+ *                     description:
+ *                       type: string
+ *                       example: "updated Description"
+ *                     price:
+ *                       type: number
+ *                       example: 10
+ *                     stock_quantity:
+ *                       type: integer
+ *                       example: 230000
+ *                     is_featured:
+ *                       type: boolean
+ *                       example: false
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2024-07-18T22:13:25.923Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2024-07-18T22:44:02.749Z"
+ *       422:
+ *         description: Unprocessable Entity
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "Fail"
+ *                 message:
+ *                   type: string
+ *                   example: "Valid Product ID is required!"
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ * 
+ * components:
+ *   responses:
+ *     InternalServerError:
+ *       description: Internal server error
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 example: "Fail"
+ *               message:
+ *                 type: string
+ *                 example: "Internal Server error"
+ */
 router.patch('/product/unfeatured/:id', authenticateToken, authorizeRole(['admin']), productController.makeProductNotFeatured);
 
 
