@@ -433,48 +433,75 @@ router.post('/register/buyer', authController.registerBuyer);
  */
 router.get('/verify/buyer/:token', authenticateToken, authController.verifyBuyerAccount);
 
-
 /**
  * @swagger
  * /api/auth/login:
  *   post:
- *     summary: Login to the application
+ *     summary: User login
  *     tags: [Authentication]
- *     description: Endpoint for users to login with their credentials and receive a JWT token for authentication.
+ *     description: Endpoint for user login. Returns a JWT token on successful authentication.
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - email
+ *               - password
  *             properties:
  *               email:
  *                 type: string
- *                 example: buyer2@gmail.com
+ *                 example: kentmars2002@gmail.com
  *               password:
  *                 type: string
- *                 example: buyer
+ *                 example: Inyamiframbo@1234
  *     responses:
  *       200:
- *         description: Successful login
+ *         description: Login successful
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 token:
+ *                 status:
  *                   type: string
- *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsIm5hbWUiOiJidXllcjI0NSIsImVtYWlsIjoiYnV5ZXIyQGdtYWlsLmNvbSIsInJvbGUiOiJidXllciIsImlhdCI6MTcyMDgwODUwNiwiZXhwIjoxNzIwODEyMTA2fQ.zT0YxAQDV1NDrjMfjT_Wn0U8xo6RAcDOvhvXGLLzKcw"
- *       401:
- *         description: Unauthorized - User not found or invalid password
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
+ *                   example: "Success"
  *                 message:
  *                   type: string
- *                   example: Invalid email or password
+ *                   example: "Log in Successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     Token:
+ *                       type: string
+ *                       example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwibmFtZSI6ImJ1eWVyMiIsImVtYWlsIjoia2VudG1hcnMyMDAyQGdtYWlsLmNvbSIsInJvbGUiOiJidXllciIsImlhdCI6MTcyMTMwNzY4NywiZXhwIjoxNzIxMzExMjg3fQ.UoGQFJRmPVADtQlTEbMs4lIpKRfOFOHEhH_0P9Usc2g"
+ *       401:
+ *         description: Invalid password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "Fail"
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid password"
+ *       422:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "Fail"
+ *                 message:
+ *                   type: string
+ *                   example: "User not found"
  *       500:
  *         description: Internal server error
  *         content:
@@ -484,7 +511,9 @@ router.get('/verify/buyer/:token', authenticateToken, authController.verifyBuyer
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Error logging in
+ *                   example: "Error logging in"
+ *                 error:
+ *                   type: string
  */
 router.post('/login', authController.login);
 

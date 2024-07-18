@@ -183,10 +183,6 @@ const verifyBuyerAccount = async (req, res) => {
         return res.status(422).json(jsend('Fail', 'Your account wasn\'t verified. Try again in a moment'));
       }
 
-      if (!updatedUser) {
-        return res.status(404).json(jsend('Fail', 'User not found'));
-      }
-
       return res.status(200).json(jsend('Success', 'Account verified successfully, Login again', 
         { id: updatedUser.id, 
           name: updatedUser.name,
@@ -206,25 +202,24 @@ const verifyBuyerAccount = async (req, res) => {
 
 //login
 const login = async (req, res)=>{
-    
         try {
           const { email, password } = req.body;
           const user = await User.findOne({ where: { email } });
       
           if (!user) {
-            return res.status(422).json({ message: 'User not found' });
+            return res.status(422).json(jsend('Fail', 'User not found'));
           }
-      
+
           const isPasswordValid = await bcrypt.compare(password, user.password);
       
           if (!isPasswordValid) {
-            return res.status(401).json({ message: 'Invalid password' });
+            return res.status(401).json(jsend('Fail', 'Invalid password'));
           }
       
           // Include the user's role in the JWT
           const token = jwt.sign({ id: user.id, name:user.name, email: user.email, role: user.role }, secret_key, { expiresIn: expiration });
       
-          res.json({ token });
+          res.status(200).json(jsend('Success', 'Log in Successfully', { Token: token}));
         } catch (error) {
           res.status(500).json({ message: 'Error logging in', error: error.message });
         }
