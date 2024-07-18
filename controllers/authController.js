@@ -34,7 +34,7 @@ const registerAdmin = async (req, res) => {
             }
           });
           if (emailExists) {
-            return res.status(422).json(jsend('Fail', 'The Email already registered! Use Another One'));
+            return res.status(422).json(jsend('Fail', 'The Email already registered!'));
         }
 
          // Validate password strength and structure
@@ -53,7 +53,7 @@ const registerAdmin = async (req, res) => {
           email,
           password:hashedPswd,
           role: 'admin',
-          is_email_verified: false,
+          is_email_verified: true,
         });
   
         res.status(201).json({ message: 'Admin User registered successfully', user: {
@@ -95,8 +95,7 @@ const registerBuyer = async (req, res) => {
         // Validate password strength and structure
         const passwordValidationResult = validatePassword(password);
         if (passwordValidationResult !== true) {
-          return res.status(400).json(jsend('Fail', 'Password does not meet the required criteria', {Errors: passwordValidationResult} ))
-           
+          return res.status(400).json(jsend('Fail', 'Password does not meet required rules', {Errors: passwordValidationResult} ))
         }
 
         //hash password
@@ -112,7 +111,7 @@ const registerBuyer = async (req, res) => {
         });
 
         if (!newUser) {
-          return res.status(422).json(jsend('Fail', 'Account not registered'));
+          return res.status(500).json(jsend('Fail', 'Account not registered'));
         }
 
       //Send verification E-mail

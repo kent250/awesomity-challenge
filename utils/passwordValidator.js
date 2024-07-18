@@ -10,7 +10,7 @@ schema
 
 function validatePassword(password) {
   const validationResult = schema.validate(password, { details: true });
-  return validationResult;
+  return validationResult.length === 0 ? true : validationResult;
 }
 
 module.exports = validatePassword;

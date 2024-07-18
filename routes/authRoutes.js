@@ -52,7 +52,6 @@ const { authenticateToken, authorizeRole } = require('../middlewares/auth');
  *         description: Internal server error
  */
 router.post('/register/admin', authController.registerAdmin);
-
 /**
  * @swagger
  * /api/auth/register/buyer:
@@ -66,77 +65,147 @@ router.post('/register/admin', authController.registerAdmin);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
  *             properties:
  *               name:
  *                 type: string
- *                 example: buyer2
+ *                 example: John Doe
  *               email:
  *                 type: string
- *                 example: buyer2@gmail.com
+ *                 example: johndoe@gmail.com
  *               password:
  *                 type: string
- *                 example: buyer
+ *                 example: Strong!Pass1
  *     responses:
  *       201:
  *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Welcome! Check email johndore@gmail.com to verify."
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     name:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     role:
+ *                       type: string
+ *                       example: buyer
+ *                     is_email_verified:
+ *                       type: boolean
+ *                       example: false
+  *       400:
+ *         description: Invalid password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     Errors:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           validation:
+ *                             type: string
+ *                           arguments:
+ *                             type: integer
+ *                           message:
+ *                             type: string
+ *             examples:
+ *               All Errors:
+ *                 value:
+ *                   status: "Fail"
+ *                   message: "Password does not meet required rules"
+ *                   data:
+ *                     Errors:
+ *                       - validation: "min"
+ *                         arguments: 8
+ *                         message: "The string should have a minimum length of 8 characters"
+ *                       - validation: "uppercase"
+ *                         message: "The string should have a minimum of 1 uppercase letter"
+ *                       - validation: "lowercase"
+ *                         message: "The string should have a minimum of 1 lowercase letter"
+ *                       - validation: "digits"
+ *                         message: "The string should have a minimum of 1 digit"
+ *               Length Error:
+ *                 value:
+ *                   status: "Fail"
+ *                   message: "Password does not meet required rules"
+ *                   data:
+ *                     Errors:
+ *                       - validation: "min"
+ *                         arguments: 8
+ *                         message: "The string should have a minimum length of 8 characters"
+ *               Upper or Lower case Error:
+ *                 value:
+ *                   status: "Fail"
+ *                   message: "Password does not meet required rules"
+ *                   data:
+ *                     Errors:
+ *                       - validation: "uppercase"
+ *                         message: "The string should have a minimum of 1 uppercase letter"
+ *       422:
+ *         description: Invalid Email or email already registered
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "Fail"
+ *                 message:
+ *                   type: string
+ *                   example: "Please enter a valid email address."
+ *             examples:
+ *               Invalid Email:
+ *                 value:
+ *                   status: "Fail"
+ *                   message: "Please enter a valid email address."
+ *               Email Exists:
+ *                 value:
+ *                   status: "Fail"
+ *                   message: "The Email already registered!"
+ *   
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: string
+ *             examples:
+ *               General Error:
+ *                 value:
+ *                   message: "Internal server error"
+ *               Database Error:
+ *                 value:
+ *                   message: "Internal server error"
  */
 router.post('/register/buyer', authController.registerBuyer);
-
-/**
- * @swagger
- * /api/auth/login:
- *   post:
- *     summary: Login to the application
- *     tags: [Authentication]
- *     description: Endpoint for users to login with their credentials and receive a JWT token for authentication.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 example: buyer2@gmail.com
- *               password:
- *                 type: string
- *                 example: buyer
- *     responses:
- *       200:
- *         description: Successful login
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 token:
- *                   type: string
- *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsIm5hbWUiOiJidXllcjI0NSIsImVtYWlsIjoiYnV5ZXIyQGdtYWlsLmNvbSIsInJvbGUiOiJidXllciIsImlhdCI6MTcyMDgwODUwNiwiZXhwIjoxNzIwODEyMTA2fQ.zT0YxAQDV1NDrjMfjT_Wn0U8xo6RAcDOvhvXGLLzKcw"
- *       401:
- *         description: Unauthorized - User not found or invalid password
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Invalid email or password
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Error logging in
- */
-router.post('/login', authController.login);
 
 /**
  * @swagger
@@ -236,5 +305,61 @@ router.post('/login', authController.login);
  *                   example: Internal server error
  */
 router.get('/verify/:token', authController.verifyBuyerAccount);
+
+
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Login to the application
+ *     tags: [Authentication]
+ *     description: Endpoint for users to login with their credentials and receive a JWT token for authentication.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: buyer2@gmail.com
+ *               password:
+ *                 type: string
+ *                 example: buyer
+ *     responses:
+ *       200:
+ *         description: Successful login
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIsIm5hbWUiOiJidXllcjI0NSIsImVtYWlsIjoiYnV5ZXIyQGdtYWlsLmNvbSIsInJvbGUiOiJidXllciIsImlhdCI6MTcyMDgwODUwNiwiZXhwIjoxNzIwODEyMTA2fQ.zT0YxAQDV1NDrjMfjT_Wn0U8xo6RAcDOvhvXGLLzKcw"
+ *       401:
+ *         description: Unauthorized - User not found or invalid password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Invalid email or password
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error logging in
+ */
+router.post('/login', authController.login);
+
 
 module.exports = router;
