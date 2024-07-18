@@ -55,6 +55,10 @@ const registerAdmin = async (req, res) => {
           role: 'admin',
           is_email_verified: true,
         });
+
+        if (!newUser) {
+          return res.status(500).json(jsend('Fail', 'Account not registered'));
+        }
   
         res.status(201).json({ message: 'Admin User registered successfully', user: {
           id: newUser.id,
