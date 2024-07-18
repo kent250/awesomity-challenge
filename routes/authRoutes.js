@@ -326,20 +326,20 @@ router.post('/register/buyer', authController.registerBuyer);
 
 /**
  * @swagger
- * /api/auth/verify/{token}:
+ * /api/auth/verify/buyer/{token}:
  *   get:
  *     summary: Verify buyer account
- *     description: Verify a buyer's account using the provided token. This route should only be accessed by logged-in buyers.
  *     tags: [Authentication]
- *     security:
- *       - bearerAuth: []
+ *     description: Endpoint to verify a buyer's account using a token sent via email.
  *     parameters:
  *       - in: path
  *         name: token
  *         required: true
  *         schema:
  *           type: string
- *         description: The verification token sent to the buyer's email
+ *         description: Verification token sent to the buyer's email
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Account verified successfully
@@ -350,24 +350,37 @@ router.post('/register/buyer', authController.registerBuyer);
  *               properties:
  *                 status:
  *                   type: string
- *                   example: Success
+ *                   example: "Success"
  *                 message:
  *                   type: string
- *                   example: Account verified successfully, Login again
+ *                   example: "Account verified successfully, Login again"
  *                 data:
  *                   type: object
  *                   properties:
  *                     id:
  *                       type: integer
- *                       example: 1
+ *                       example: 7
  *                     name:
  *                       type: string
- *                       example: John Doe
+ *                       example: "buyer2"
  *                     email:
  *                       type: string
- *                       example: john@example.com
+ *                       example: "kentmars2002@gmail.com"
+ *       202:
+ *         description: User already verified
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "Success"
+ *                 message:
+ *                   type: string
+ *                   example: "You are already verified"
  *       401:
- *         description: Unauthorized - Invalid token
+ *         description: Unauthorized - Invalid or missing token, or user mismatch
  *         content:
  *           application/json:
  *             schema:
@@ -375,27 +388,24 @@ router.post('/register/buyer', authController.registerBuyer);
  *               properties:
  *                 status:
  *                   type: string
- *                   example: Fail
+ *                   example: "Fail"
  *                 message:
  *                   type: string
- *                   example: "Unauthorized: JsonWebTokenError"
- *       403:
- *         description: Forbidden - User is not a buyer
- *       404:
- *         description: User not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: Fail
- *                 message:
- *                   type: string
- *                   example: User not found
+ *             examples:
+ *               No token provided:
+ *                 value:
+ *                   status: "Fail"
+ *                   message: "No token provided."
+ *               Invalid token:
+ *                 value:
+ *                   status: "Fail"
+ *                   message: "Unauthorized: Token is not valid"
+ *               User mismatch:
+ *                 value:
+ *                   status: "Fail"
+ *                   message: "Unauthorized: Verify link not belongs to you"
  *       422:
- *         description: Account verification failed
+ *         description: Verification failed
  *         content:
  *           application/json:
  *             schema:
@@ -403,10 +413,10 @@ router.post('/register/buyer', authController.registerBuyer);
  *               properties:
  *                 status:
  *                   type: string
- *                   example: Fail
+ *                   example: "Fail"
  *                 message:
  *                   type: string
- *                   example: Your account wasn't verified. Try again in a moment
+ *                   example: "Your account wasn't verified. Try again in a moment"
  *       500:
  *         description: Internal server error
  *         content:
@@ -416,12 +426,12 @@ router.post('/register/buyer', authController.registerBuyer);
  *               properties:
  *                 status:
  *                   type: string
- *                   example: Fail
+ *                   example: "Fail"
  *                 message:
  *                   type: string
- *                   example: Internal server error
+ *                   example: "Internal server error"
  */
-router.get('/verify/:token', authController.verifyBuyerAccount);
+router.get('/verify/buyer/:token', authenticateToken, authController.verifyBuyerAccount);
 
 
 /**
