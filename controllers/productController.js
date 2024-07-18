@@ -210,11 +210,46 @@ const makeProductNotFeatured = async (req, res) => {
     }
 }
 
+const productsByCategory = async (req, res) => {
+    try {
+        const categoryId = req.params.categoryId;
+        //check if given category exists
+        const checkCategoryExists = await Category.findByPk(categoryId);
+        if (!checkCategoryExists) {
+            return res.status(400).json(jsend('Fail', 'Category Unknown'))
+        }
+
+        //retrieve category related products
+        const retrieveProducts = await Product.findAll({
+            where: {
+                category_id: categoryId
+            },
+            include: [{
+                model: Category,
+                as: 'category'
+            }]
+        });
+
+        //error checking if there is problem fetching products and if 0 products returned
+        if (!retrieveProducts) {
+            return res.status(500).json(jsend('Fail', 'There was an error retriving product details'));
+        }
+        if (retrieveProducts.length === 0) {
+            return res.status(200).json(jsend('Success', '0 Products in this category'));
+        }
+        
+        return res.status(200).json(jsend('Success', `Products in category ${categoryId} retrieved successfully`, retrieveProducts));
+
+    } catch (error) {
+        return res.status(500).json(jsend('Fail', 'Internal Server error'));
+    }
+}
 
 module.exports = {
     newProduct,
     updateProduct,
     retrieveAllProducts,
     makeProductFeatured,
-    makeProductNotFeatured
+    makeProductNotFeatured,
+    productsByCategory
 }
