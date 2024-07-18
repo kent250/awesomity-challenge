@@ -431,7 +431,7 @@ router.post('/register/buyer', authController.registerBuyer);
  *                   type: string
  *                   example: "Internal server error"
  */
-router.get('/verify/buyer/:token', authenticateToken, authController.verifyBuyerAccount);
+router.get('/verify/buyer/:token', authenticateToken, authorizeRole(['buyer']),authController.verifyBuyerAccount);
 
 /**
  * @swagger
