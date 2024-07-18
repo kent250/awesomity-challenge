@@ -137,7 +137,7 @@ const { authenticateToken, authorizeRole } = require('../middlewares/auth');
  *                       format: date-time
  *                       example: 2024-07-13T10:30:00.000Z
  *       400:
- *         description: Bad request - Invalid input or category already exists
+ *         description: Bad request - Category already exists
  *         content:
  *           application/json:
  *             schema:
@@ -149,10 +149,6 @@ const { authenticateToken, authorizeRole } = require('../middlewares/auth');
  *                 message:
  *                   type: string
  *                   example: Valid Category name is required.
- *       401:
- *         description: Unauthorized - Invalid or missing token
- *       403:
- *         description: Forbidden - User is not an admin
  *       500:
  *         description: Internal server error
  *         content:
@@ -238,10 +234,6 @@ router.get('/category', categoryController.retrieveCategories);
  *                 message:
  *                   type: string
  *                   example: Category already exists.
- *       401:
- *         description: Unauthorized - Invalid or missing token
- *       403:
- *         description: Forbidden - User is not an admin
  *       500:
  *         description: Internal server error
  *         content:
