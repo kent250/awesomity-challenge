@@ -17,6 +17,33 @@ const base_url =  process.env.BASE_URL;
 const registerAdmin = async (req, res) => {
     try {
         const { name, email, password} = req.body;
+
+        //trim email address
+        const trimmedEmail = email.trim();
+
+        //validate email given
+        const validateEmail = validator.isEmail(trimmedEmail);
+        if (!validateEmail) {
+          return res.status(422).json(jsend('Fail', 'Please enter a valid email address.'));
+        }
+
+        //check if there if email exists
+        const emailExists = await User.findOne({
+          where: {
+              email: trimmedEmail,
+          }
+        });
+        if (emailExists) {
+          return res.status(422).json(jsend('Fail', 'The Email already registered! Use Another One'));
+      }
+
+
+         // Validate password strength and structure
+         const passwordValidationResult = validatePassword(password);
+         if (passwordValidationResult !== true) {
+           return res.status(400).json(jsend('Fail', 'Password does not meet the required criteria', {Errors: passwordValidationResult} ))
+            
+         }
         
         //hash password
         const hashedPswd = await bcrypt.hash(password, 10);
@@ -72,7 +99,6 @@ const registerBuyer = async (req, res) => {
           return res.status(400).json(jsend('Fail', 'Password does not meet the required criteria', {Errors: passwordValidationResult} ))
            
         }
-
 
         //hash password
         const hashedPswd = await bcrypt.hash(password, 10);
