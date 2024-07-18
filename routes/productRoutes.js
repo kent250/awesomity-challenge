@@ -362,7 +362,6 @@ router.patch('/product/:id', authenticateToken, authorizeRole(['admin']), produc
  */
 router.get('/product', productController.retrieveAllProducts);
 
-
 /**
  * @swagger
  * /api/product/category/{categoryId}:
@@ -486,6 +485,7 @@ router.get('/product', productController.retrieveAllProducts);
  *                 example: "0 Products in this category"
  */
 router.get('/product/category/:categoryId', productController.productsByCategory);
+
 
 
 router.patch('/product/featured/:id', authenticateToken, authorizeRole(['admin']), productController.makeProductFeatured);
