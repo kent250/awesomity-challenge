@@ -45,7 +45,7 @@ const retrieveCategories = async (req, res) => {
         if (allCategories.length === 0 ) {
             return res.status(200).json(jsend('Success', '0 category Found'));
         }
-        return  res.status(201).json(jsend('Success', 'Categories Found',allCategories));
+        return  res.status(200).json(jsend('Success', 'Categories Found',allCategories));
 
     } catch (error) {
         console.log(error);

@@ -66,7 +66,7 @@ const { authenticateToken, authorizeRole } = require('../middlewares/auth');
  *                   example: Success
  *                 message:
  *                   type: string
- *                   example: No categories Found
+ *                   example: 0 categories Found
  *       500:
  *         description: Internal server error
  *         content:
