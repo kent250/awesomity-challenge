@@ -15,7 +15,7 @@ const sendVerification = async (userId, userEmail, secret_key, baseUrl) => {
             }, secret_key, {expiresIn: process.env.VERIFICATION_EMAIL_EXPIRE_TIME});
 
         //make base url+attach token
-        const urlToSend = baseUrl +"api/auth/verify/"+ token;
+        const urlToSend = baseUrl +"api/auth/verify/buyer/"+ token;
             
         //send verification email
         const mailOptions = {
