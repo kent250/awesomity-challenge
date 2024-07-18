@@ -6,6 +6,7 @@ const User = require('../models/user');
 const jsend = require('../config/apiFormat');
 const { secret_key, expiration } = require('../config/jwt');
 const sendEmails = require('../utils/sendEmails');
+const validatePassword = require('../utils/passwordValidator');
 
 
 const secrete_key = process.env.SECRET_KEY;
@@ -64,6 +65,14 @@ const registerBuyer = async (req, res) => {
         if (emailExists) {
             return res.status(422).json(jsend('Fail', 'The Email already registered!'));
         }
+
+        // Validate password strength and structure
+        const passwordValidationResult = validatePassword(password);
+        if (passwordValidationResult !== true) {
+          return res.status(400).json(jsend('Fail', 'Password does not meet the required criteria', {Errors: passwordValidationResult} ))
+           
+        }
+
 
         //hash password
         const hashedPswd = await bcrypt.hash(password, 10);
