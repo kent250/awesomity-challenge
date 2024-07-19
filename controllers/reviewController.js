@@ -81,6 +81,10 @@ const retrieveReviews = async (req,res) => {
             }]
         });
 
+        if (retrieveReviews.length === 0) {
+            return res.status(200).json(jsend('Success', 'No reviews found for this product'));
+        }
+
         if (!retrieveReviews) {
             return res.status(500).json(jsend('Fail', 'There was an error retrieving reviews, try again later'))
         }

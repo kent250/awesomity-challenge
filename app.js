@@ -26,16 +26,14 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 
 syncModels().then(() => {
-
+  
   // Routes
-    app.use('/api/auth', authRoutes);
-    app.use('/api/user', userProfileRoutes);
-    app.use('/api', categoryRoutes);
-    app.use('/api', productRoutes);
-    app.use('/api', orderRoutes);
-    app.use('/api', reviewRoutes);
-
-
+  app.use('/api/auth', authRoutes);
+  app.use('/api/user', userProfileRoutes);
+  app.use('/api', categoryRoutes);
+  app.use('/api', productRoutes);
+  app.use('/api', orderRoutes);
+  app.use('/api', reviewRoutes);
 
 
   // Start the server

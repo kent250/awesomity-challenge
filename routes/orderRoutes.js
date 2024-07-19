@@ -379,7 +379,7 @@ router.get('/orders/:id(\\d+)', authenticateToken, authorizeRole(['buyer', 'admi
 
 /**
  * @swagger
- * /orders/{id}:
+ * /api/orders/{id}:
  *   patch:
  *     summary: Update the status of an order
  *     tags: [Orders]
@@ -529,7 +529,7 @@ router.patch('/orders/:id', authenticateToken, authorizeRole(['admin']), orderCo
 
 /**
  * @swagger
- * /orders/history:
+ * /api/orders/history:
  *   get:
  *     summary: View order history
  *     tags: [Orders]
