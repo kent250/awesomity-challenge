@@ -21,7 +21,7 @@ const makeOrder = async (req, res) => {
         // Validate if user is legit
         const buyer = await User.findByPk(loggedInUser);
         if (!buyer) {
-            return res.status(400).json(jsend('Fail', 'User Account not found'));
+            return res.status(403).json(jsend('Fail', 'Forbidden '));
         }
 
         // Calculate total amount
@@ -62,7 +62,10 @@ const makeOrder = async (req, res) => {
 
         // save done queries using transaction
         await t.commit();
-        res.status(201).json(jsend('Success', { orderId: saveOrder.id, totalAmount }));
+        res.status(201).json(jsend('Success', { 
+          orderId: saveOrder.id, 
+          orderStatus:saveOrder.status,
+          totalAmount }));
 
     } catch (error) {
         if (t) await t.rollback();
@@ -297,7 +300,10 @@ const viewOrderHistory = async (req, res) => {
           totalAmount: totalAmount
         };
       });
-
+      
+      if (orders.length === 0) {
+        res.status(200).json(jsend('Sucess', 'No order history available'));
+      }
       res.status(200).json(jsend('Sucess', 'Order Hisotry returned', formattedOrders));
 
   } catch (error) {
@@ -307,7 +313,7 @@ const viewOrderHistory = async (req, res) => {
 }
 
 
-
+ 
 module.exports = {
     makeOrder,
     retrieveOrders,
