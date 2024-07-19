@@ -62,6 +62,7 @@ const sendOrderStatusUpdate = async (userEmail, userNames, orderStatus, orderId,
             if (error) {
                 console.log(error);
             }else{
+                console.log(userEmail, userNames, orderStatus, orderId, orderDate, totalAmount)
                 console.log('Update email sent to buyer')
             }
         });
