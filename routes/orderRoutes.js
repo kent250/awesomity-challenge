@@ -122,118 +122,118 @@ const { authenticateToken, authorizeRole } = require('../middlewares/auth');
  */
 router.post('/orders/', authenticateToken, authorizeRole(['buyer']) , orderController.makeOrder);
 
-/**
- * @swagger
- * /api/orders/:
- *   get:
- *     summary: Retrieve all orders for the logged-in user
- *     tags: [Orders]
- *     description: Retrieves all orders for the logged-in user. Admins can retrieve all orders.
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Successfully retrieved orders or no orders found
- *         content:
- *           application/json:
- *             schema:
- *               oneOf:
- *                 - $ref: '#/components/schemas/OrdersFound'
- *                 - $ref: '#/components/schemas/NoOrders'
- *             examples:
- *               OrdersFound:
- *                 summary: Orders found
- *                 value:
- *                   status: "Success"
- *                   message: "Success retrieving orders"
- *                   data:
- *                     - orderId: 17
- *                       status: "pending"
- *                       totalAmount: 2000000
- *                       orderDate: "2024-07-19T12:03:47.343Z"
- *                     - orderId: 16
- *                       status: "pending"
- *                       totalAmount: 2000000
- *                       orderDate: "2024-07-19T12:01:09.874Z"
- *                     - orderId: 12
- *                       status: "completed"
- *                       totalAmount: 2000000
- *                       orderDate: "2024-07-19T08:38:58.000Z"
- *                     - orderId: 10
- *                       status: "completed"
- *                       totalAmount: 2000000
- *                       orderDate: "2024-07-19T08:38:40.594Z"
- *               NoOrders:
- *                 summary: No orders found
- *                 value:
- *                   status: "Success"
- *                   message: "No orders found"
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *             examples:
- *               ServerError:
- *                 summary: Internal server error
- *                 value:
- *                   status: "Fail"
- *                   message: "Internal server error"
- * 
- * components:
- *   schemas:
- *     OrdersFound:
- *       type: object
- *       properties:
- *         status:
- *           type: string
- *           enum: [Success]
- *         message:
- *           type: string
- *         data:
- *           type: array
- *           items:
- *             type: object
- *             properties:
- *               orderId:
- *                 type: integer
- *               status:
- *                 type: string
- *               totalAmount:
- *                 type: number
- *               orderDate:
- *                 type: string
- *                 format: date-time
- *     NoOrders:
- *       type: object
- *       properties:
- *         status:
- *           type: string
- *           enum: [Success]
- *         message:
- *           type: string
- *         data:
- *           type: array
- *           items: {}
- *     Forbidden:
- *       type: object
- *       properties:
- *         status:
- *           type: string
- *           enum: [Fail]
- *         message:
- *           type: string
- *     Error:
- *       type: object
- *       properties:
- *         status:
- *           type: string
- *           enum: [Fail]
- *         message:
- *           type: string
- */
-router.get('/orders/', authenticateToken, authorizeRole(['buyer', 'admin']) , orderController.retrieveOrders);
+// /**
+//  * @swagger
+//  * /api/orders/:
+//  *   get:
+//  *     summary: Retrieve all orders for the logged-in user
+//  *     tags: [Orders]
+//  *     description: Retrieves all orders for the logged-in user. Admins can retrieve all orders.
+//  *     security:
+//  *       - bearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Successfully retrieved orders or no orders found
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               oneOf:
+//  *                 - $ref: '#/components/schemas/OrdersFound'
+//  *                 - $ref: '#/components/schemas/NoOrders'
+//  *             examples:
+//  *               OrdersFound:
+//  *                 summary: Orders found
+//  *                 value:
+//  *                   status: "Success"
+//  *                   message: "Success retrieving orders"
+//  *                   data:
+//  *                     - orderId: 17
+//  *                       status: "pending"
+//  *                       totalAmount: 2000000
+//  *                       orderDate: "2024-07-19T12:03:47.343Z"
+//  *                     - orderId: 16
+//  *                       status: "pending"
+//  *                       totalAmount: 2000000
+//  *                       orderDate: "2024-07-19T12:01:09.874Z"
+//  *                     - orderId: 12
+//  *                       status: "completed"
+//  *                       totalAmount: 2000000
+//  *                       orderDate: "2024-07-19T08:38:58.000Z"
+//  *                     - orderId: 10
+//  *                       status: "completed"
+//  *                       totalAmount: 2000000
+//  *                       orderDate: "2024-07-19T08:38:40.594Z"
+//  *               NoOrders:
+//  *                 summary: No orders found
+//  *                 value:
+//  *                   status: "Success"
+//  *                   message: "No orders found"
+//  *       500:
+//  *         description: Internal server error
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               $ref: '#/components/schemas/Error'
+//  *             examples:
+//  *               ServerError:
+//  *                 summary: Internal server error
+//  *                 value:
+//  *                   status: "Fail"
+//  *                   message: "Internal server error"
+//  * 
+//  * components:
+//  *   schemas:
+//  *     OrdersFound:
+//  *       type: object
+//  *       properties:
+//  *         status:
+//  *           type: string
+//  *           enum: [Success]
+//  *         message:
+//  *           type: string
+//  *         data:
+//  *           type: array
+//  *           items:
+//  *             type: object
+//  *             properties:
+//  *               orderId:
+//  *                 type: integer
+//  *               status:
+//  *                 type: string
+//  *               totalAmount:
+//  *                 type: number
+//  *               orderDate:
+//  *                 type: string
+//  *                 format: date-time
+//  *     NoOrders:
+//  *       type: object
+//  *       properties:
+//  *         status:
+//  *           type: string
+//  *           enum: [Success]
+//  *         message:
+//  *           type: string
+//  *         data:
+//  *           type: array
+//  *           items: {}
+//  *     Forbidden:
+//  *       type: object
+//  *       properties:
+//  *         status:
+//  *           type: string
+//  *           enum: [Fail]
+//  *         message:
+//  *           type: string
+//  *     Error:
+//  *       type: object
+//  *       properties:
+//  *         status:
+//  *           type: string
+//  *           enum: [Fail]
+//  *         message:
+//  *           type: string
+//  */
+// router.get('/orders/', authenticateToken, authorizeRole(['buyer', 'admin']) , orderController.retrieveOrders);
 
 /**
  * @swagger
