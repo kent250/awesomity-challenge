@@ -235,6 +235,146 @@ router.post('/orders/', authenticateToken, authorizeRole(['buyer']) , orderContr
  */
 router.get('/orders/', authenticateToken, authorizeRole(['buyer', 'admin']) , orderController.retrieveOrders);
 
+/**
+ * @swagger
+ * /api/orders/{id}:
+ *   get:
+ *     summary: Retrieve details of a specific order
+ *     tags: [Orders]
+ *     description: Retrieves details of a specific order by ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Numeric ID of the order to retrieve
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved order details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/OrderDetails'
+ *             examples:
+ *               OrderFound:
+ *                 summary: Order found
+ *                 value:
+ *                   status: "Success"
+ *                   message: "Order details retrieved successfully"
+ *                   data:
+ *                     order_id: 12
+ *                     order_date: "2024-07-19T08:38:58.000Z"
+ *                     total_amount: 2000000
+ *                     items:
+ *                       - productId: 1
+ *                         productName: "updated product"
+ *                         productDescription: "updated Description"
+ *                         quantity: 200
+ *                         unitPrice: 10000
+ *                         totalPrice: 2000000
+ *       403:
+ *         description: Forbidden - You are not authorized to view this order
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Forbidden'
+ *             examples:
+ *               NotAuthorized:
+ *                 summary: User not authorized to view the order
+ *                 value:
+ *                   status: "Fail"
+ *                   message: "You are not authorized to view this order"
+ *       404:
+ *         description: Order not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/NotFound'
+ *             examples:
+ *               OrderNotFound:
+ *                 summary: Order not found
+ *                 value:
+ *                   status: "Fail"
+ *                   message: "Order not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             examples:
+ *               ServerError:
+ *                 summary: Internal server error
+ *                 value:
+ *                   status: "Fail"
+ *                   message: "Internal server error"
+ * 
+ * components:
+ *   schemas:
+ *     OrderDetails:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ *           enum: [Success]
+ *         message:
+ *           type: string
+ *         data:
+ *           type: object
+ *           properties:
+ *             order_id:
+ *               type: integer
+ *             order_date:
+ *               type: string
+ *               format: date-time
+ *             total_amount:
+ *               type: number
+ *             items:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   productId:
+ *                     type: integer
+ *                   productName:
+ *                     type: string
+ *                   productDescription:
+ *                     type: string
+ *                   quantity:
+ *                     type: integer
+ *                   unitPrice:
+ *                     type: number
+ *                   totalPrice:
+ *                     type: number
+ *     Forbidden:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ *           enum: [Fail]
+ *         message:
+ *           type: string
+ *     NotFound:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ *           enum: [Fail]
+ *         message:
+ *           type: string
+ *     Error:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ *           enum: [Fail]
+ *         message:
+ *           type: string
+ */
+
 router.get('/orders/:id(\\d+)', authenticateToken, authorizeRole(['buyer', 'admin']), orderController.orderDetails);
 
 router.patch('/orders/:id', authenticateToken, authorizeRole(['admin']), orderController.updateOrderStatus);
