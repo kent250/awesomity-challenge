@@ -569,11 +569,11 @@ router.get('/product/category/:categoryId', productController.productsByCategory
  *           type: string
  *           format: date-time
  */
-router.patch('/product/featured/:id', authenticateToken, authorizeRole(['admin']), productController.makeProductFeatured);
+router.put('/product/featured/:id', authenticateToken, authorizeRole(['admin']), productController.makeProductFeatured);
 
 /**
  * @swagger
- * /api/product/unfeature/{id}:
+ * /api/product/unfeatured/{id}:
  *   put:
  *     summary: Make a product not featured
  *     tags: [Products]
@@ -662,7 +662,7 @@ router.patch('/product/featured/:id', authenticateToken, authorizeRole(['admin']
  *                 type: string
  *                 example: "Internal Server error"
  */
-router.patch('/product/unfeatured/:id', authenticateToken, authorizeRole(['admin']), productController.makeProductNotFeatured);
+router.put('/product/unfeatured/:id', authenticateToken, authorizeRole(['admin']), productController.makeProductNotFeatured);
 
 
 
