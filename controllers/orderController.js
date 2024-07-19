@@ -300,7 +300,10 @@ const viewOrderHistory = async (req, res) => {
           totalAmount: totalAmount
         };
       });
-
+      
+      if (orders.length === 0) {
+        res.status(200).json(jsend('Sucess', 'No order history available'));
+      }
       res.status(200).json(jsend('Sucess', 'Order Hisotry returned', formattedOrders));
 
   } catch (error) {
