@@ -54,10 +54,14 @@ const makeOrder = async (req, res) => {
                 product_id: product.product_id,
                 quantity: product.quantity,
                 unit_price: product.unit_price
-            }, { transaction: t });
+            }, 
+            { transaction: t }
+          );
 
             // Update product stock
-            await productAvailabilityCheck.decrement('stock_quantity', { by: product.quantity, transaction: t });
+            await productAvailabilityCheck.decrement('stock_quantity', { by: product.quantity, 
+              transaction: t 
+            });
         }
 
         // save done queries using transaction
@@ -70,210 +74,210 @@ const makeOrder = async (req, res) => {
     }
 }
 
-const retrieveOrders = async (req, res) => {
-    try {
-      const loggedInUser = req.user.id;
-      const userRole = req.user.role;
+// const retrieveOrders = async (req, res) => {
+//     try {
+//       const loggedInUser = req.user.id;
+//       const userRole = req.user.role;
   
-      let retrieveOrders;
+//       let retrieveOrders;
   
-      if (userRole === 'admin') {
-        retrieveOrders = await Order.findAll({
-          order: [['createdAt', 'DESC']],
-        });
-      } else {
-        retrieveOrders = await Order.findAll({
-          order: [['createdAt', 'DESC']],
-          where: {
-            buyer_id: loggedInUser,
-          },
-        });
-      }
+//       if (userRole === 'admin') {
+//         retrieveOrders = await Order.findAll({
+//           order: [['createdAt', 'DESC']],
+//         });
+//       } else {
+//         retrieveOrders = await Order.findAll({
+//           order: [['createdAt', 'DESC']],
+//           where: {
+//             buyer_id: loggedInUser,
+//           },
+//         });
+//       }
   
-      if (!retrieveOrders) {
-        return res.status(422).json(jsend('Fail', 'There was an error retrieving orders'));
-      }
+//       if (!retrieveOrders) {
+//         return res.status(422).json(jsend('Fail', 'There was an error retrieving orders'));
+//       }
   
-      if (retrieveOrders.length === 0) {
-        return res.status(200).json(jsend('Success', '0 Orders Found'));
-      }
+//       if (retrieveOrders.length === 0) {
+//         return res.status(200).json(jsend('Success', '0 Orders Found'));
+//       }
   
-      // Mapping to extract required information
-      const ordersData = retrieveOrders.map(order => ({
-        orderId: order.id,
-        status: order.status,
-        totalAmount: order.total_amount,
-        orderDate: order.createdAt,
-      }));
+//       // Mapping to extract required information
+//       const ordersData = retrieveOrders.map(order => ({
+//         orderId: order.id,
+//         status: order.status,
+//         totalAmount: order.total_amount,
+//         orderDate: order.createdAt,
+//       }));
   
-      return res.status(200).json(jsend('Success', 'Success retrieving orders', ordersData));
-    } catch (error) {
-      console.error('Internal server error:', error);
-      return res.status(500).json(jsend('Fail', 'Internal server error'));
-    }
-}
+//       return res.status(200).json(jsend('Success', 'Success retrieving orders', ordersData));
+//     } catch (error) {
+//       console.error('Internal server error:', error);
+//       return res.status(500).json(jsend('Fail', 'Internal server error'));
+//     }
+// }
 
-const orderDetails = async (req, res) => {
-    try {
-       const loggedInUser = req.user.id;
-       const loggedInUserRole = req.user.role;
-       const orderId = req.params.id;
+// const orderDetails = async (req, res) => {
+//     try {
+//        const loggedInUser = req.user.id;
+//        const loggedInUserRole = req.user.role;
+//        const orderId = req.params.id;
 
-      // retrieve order
-      const checkOrder = await Order.findByPk(orderId);
+//       // retrieve order
+//       const checkOrder = await Order.findByPk(orderId);
 
-       if(!checkOrder) {
-        return res.status(404).json(jsend('Fail', 'Order not found'));
-       }
+//        if(!checkOrder) {
+//         return res.status(404).json(jsend('Fail', 'Order not found'));
+//        }
 
-       // Check if the user is authorized to view this order
-       if (loggedInUserRole !== 'admin' && checkOrder.buyer_id !== loggedInUser) {
-        return res.status(403).json(jsend('Fail', 'You are not authorized to view this order'));
-    }
+//        // Check if the user is authorized to view this order
+//        if (loggedInUserRole !== 'admin' && checkOrder.buyer_id !== loggedInUser) {
+//         return res.status(403).json(jsend('Fail', 'You are not authorized to view this order'));
+//     }
 
-       // retrieve an order with its all items
-       const retrieveOrder = await Order.findOne({
-          where: {
-            id: orderId
-          },
-          include: [{
-            model: OrderItems,
-            as: 'orderItems',
-            include: [{
-              model: Product,
-              as: 'product',
-              attributes: ['id', 'product_name', 'description']        
-            }]
-          }]
-       });
+//        // retrieve an order with its all items
+//        const retrieveOrder = await Order.findOne({
+//           where: {
+//             id: orderId
+//           },
+//           include: [{
+//             model: OrderItems,
+//             as: 'orderItems',
+//             include: [{
+//               model: Product,
+//               as: 'product',
+//               attributes: ['id', 'product_name', 'description']        
+//             }]
+//           }]
+//        });
 
-       // Process the data
-       const itemsDetails = retrieveOrder.orderItems.map(item => ({
-        productId: item.product.id,
-        productName: item.product.product_name,
-        productDescription: item.product.description,
-        quantity: item.quantity,
-        unitPrice: item.unit_price,
-        totalPrice: item.quantity * item.unit_price
-      }));
+//        // Process the data
+//        const itemsDetails = retrieveOrder.orderItems.map(item => ({
+//         productId: item.product.id,
+//         productName: item.product.product_name,
+//         productDescription: item.product.description,
+//         quantity: item.quantity,
+//         unitPrice: item.unit_price,
+//         totalPrice: item.quantity * item.unit_price
+//       }));
 
-      const totalOrderAmount = itemsDetails.reduce((sum, item) => sum + item.totalPrice, 0);
+//       const totalOrderAmount = itemsDetails.reduce((sum, item) => sum + item.totalPrice, 0);
 
-      // Format the response
-      const orderDetails = {
-        order_id: retrieveOrder.id,
-        order_date: retrieveOrder.createdAt,
-        total_amount: totalOrderAmount,
-        items: itemsDetails
-      };
+//       // Format the response
+//       const orderDetails = {
+//         order_id: retrieveOrder.id,
+//         order_date: retrieveOrder.createdAt,
+//         total_amount: totalOrderAmount,
+//         items: itemsDetails
+//       };
 
-       res.status(200).json(jsend('Success', 'Order details retrieved successfully', orderDetails));
+//        res.status(200).json(jsend('Success', 'Order details retrieved successfully', orderDetails));
 
-    } catch (error) { 
-        console.error('Internal server error:', error);
-        return res.status(500).json(jsend('Fail', 'Internal server error'));
-    }
-}
+//     } catch (error) { 
+//         console.error('Internal server error:', error);
+//         return res.status(500).json(jsend('Fail', 'Internal server error'));
+//     }
+// }
 
-const updateOrderStatus = async (req, res) => {
-    try {
-      const orderId = req.params.id;
-      const { newStatus } = req.body;
-      const allowedStatuses = ['pending', 'paid', 'shipped', 'delivered', 'cancelled', 'completed']
+// const updateOrderStatus = async (req, res) => {
+//     try {
+//       const orderId = req.params.id;
+//       const { newStatus } = req.body;
+//       const allowedStatuses = ['pending', 'paid', 'shipped', 'delivered', 'cancelled', 'completed']
 
-      const normalizedNewStatus = newStatus.toLowerCase();
+//       const normalizedNewStatus = newStatus.toLowerCase();
       
-      //Check if user is authorised to access 
-      if(req.user.role !== 'admin') return res.status(403).json(jsend('Fail', 'You are not authorised'));
-      //check if status is legit
-      if(allowedStatuses.includes(normalizedNewStatus) !== true) return res.status(400).json(jsend('Fail', 'You are sending unknown order status'));
+//       //Check if user is authorised to access 
+//       if(req.user.role !== 'admin') return res.status(403).json(jsend('Fail', 'You are not authorised'));
+//       //check if status is legit
+//       if(allowedStatuses.includes(normalizedNewStatus) !== true) return res.status(400).json(jsend('Fail', 'You are sending unknown order status'));
       
-      //update the order status and also get required info from returned record
-      const [affectedRows, updatedRecords] = await Order.update(
-        { status: normalizedNewStatus },
-        {
-        where: {
-          id: orderId
-        },
-        returning: true,
-      });
+//       //update the order status and also get required info from returned record
+//       const [affectedRows, updatedRecords] = await Order.update(
+//         { status: normalizedNewStatus },
+//         {
+//         where: {
+//           id: orderId
+//         },
+//         returning: true,
+//       });
 
-      const updatedOrder = updatedRecords[0];
+//       const updatedOrder = updatedRecords[0];
       
-      const orderDate = updatedOrder.createdAt
-      const orderAmount = updatedOrder.total_amount
-      const orderOwner = updatedOrder.buyer_id
+//       const orderDate = updatedOrder.createdAt
+//       const orderAmount = updatedOrder.total_amount
+//       const orderOwner = updatedOrder.buyer_id
 
      
-      const getOrderOwner = await User.findOne({ orderOwner });
-      const buyerEmail = getOrderOwner.email;
-      const buyerNames = getOrderOwner.name;
+//       const getOrderOwner = await User.findOne({ orderOwner });
+//       const buyerEmail = getOrderOwner.email;
+//       const buyerNames = getOrderOwner.name;
 
-      //send notification email
-      const sendEmail = sendEmails.sendOrderStatusUpdate(buyerEmail, buyerNames, normalizedNewStatus, orderId, orderDate, orderAmount)
-      if (!sendEmail) {
-        return res.status(400).json(jsend('Fail', 'The order Status has been updated but notification not sent'));
-      }
+//       //send notification email
+//       const sendEmail = sendEmails.sendOrderStatusUpdate(buyerEmail, buyerNames, normalizedNewStatus, orderId, orderDate, orderAmount)
+//       if (!sendEmail) {
+//         return res.status(400).json(jsend('Fail', 'The order Status has been updated but notification not sent'));
+//       }
       
-      // once all passed
-      res.status(200).json(jsend('Success', 'Order status updated, Notification E-mail sent', updatedOrder))
-    } catch (error) {
-      console.error('Internal server error:', error);
-      return res.status(500).json(jsend('Fail', 'Internal server error'));
-    }
-}
+//       // once all passed
+//       res.status(200).json(jsend('Success', 'Order status updated, Notification E-mail sent', updatedOrder))
+//     } catch (error) {
+//       console.error('Internal server error:', error);
+//       return res.status(500).json(jsend('Fail', 'Internal server error'));
+//     }
+// }
 
-const viewOrderHistory = async (req, res) => {
-    const loggedInUserRole = req.user.role;
-    const loggedInUserId = req.user.id;
+// const viewOrderHistory = async (req, res) => {
+//     const loggedInUserRole = req.user.role;
+//     const loggedInUserId = req.user.id;
 
-  try {
-    const orders = await Order.findAll({
-        where: { buyer_id: loggedInUserId},
-        include: [
-          {
-            model: OrderItems,
-            as: 'orderItems',
-            include: [{
-              model: Product,
-              as: 'product',
-              attributes: ['product_name']
-            }]
-          }
-        ],
-        order: [['createdAt', 'DESC']]
-      });
+//   try {
+//     const orders = await Order.findAll({
+//         where: { buyer_id: loggedInUserId},
+//         include: [
+//           {
+//             model: OrderItems,
+//             as: 'orderItems',
+//             include: [{
+//               model: Product,
+//               as: 'product',
+//               attributes: ['product_name']
+//             }]
+//           }
+//         ],
+//         order: [['createdAt', 'DESC']]
+//       });
 
-      const formattedOrders = orders.map(order => {
-        const orderItems = order.orderItems;
-        const productCount = orderItems.length;
-        const productNames = orderItems.map(item => item.product.product_name).join(', ');
-        const totalAmount = orderItems.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
+//       const formattedOrders = orders.map(order => {
+//         const orderItems = order.orderItems;
+//         const productCount = orderItems.length;
+//         const productNames = orderItems.map(item => item.product.product_name).join(', ');
+//         const totalAmount = orderItems.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
   
-        return {
-          orderId: order.id,
-          orderDate: order.createdAt,
-          status: order.status,
-          productCount: productCount,
-          productNames: productNames,
-          totalAmount: totalAmount
-        };
-      });
+//         return {
+//           orderId: order.id,
+//           orderDate: order.createdAt,
+//           status: order.status,
+//           productCount: productCount,
+//           productNames: productNames,
+//           totalAmount: totalAmount
+//         };
+//       });
 
-      res.status(200).json(jsend('Sucess', 'Order Hisotry returned', formattedOrders));
+//       res.status(200).json(jsend('Sucess', 'Order Hisotry returned', formattedOrders));
 
-  } catch (error) {
-    console.error('Internal server error:', error);
-      return res.status(500).json(jsend('Fail', 'Internal server error'));
-  }
-}
+//   } catch (error) {
+//     console.error('Internal server error:', error);
+//       return res.status(500).json(jsend('Fail', 'Internal server error'));
+//   }
+// }
 
 
 
 module.exports = {
     makeOrder,
-    retrieveOrders,
-    orderDetails,
-    updateOrderStatus,
-    viewOrderHistory
+    // retrieveOrders,
+    // orderDetails,
+    // updateOrderStatus,
+    // viewOrderHistory
 };

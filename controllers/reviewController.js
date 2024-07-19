@@ -93,7 +93,7 @@ const retrieveReviews = async (req,res) => {
                 rating: review.rating,
                 comment: review.comment
             }))
-        };
+        }; 
 
         res.json(jsend('Success', 'Product reviews retrieved successfully', formattedReviews));
 
