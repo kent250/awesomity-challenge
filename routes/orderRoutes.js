@@ -12,7 +12,7 @@ router.get('/orders/:id(\\d+)', authenticateToken, authorizeRole(['buyer', 'admi
 
 router.patch('/orders/:id', authenticateToken, authorizeRole(['admin']), orderController.updateOrderStatus);
 
-router.get('/orders/history', authenticateToken, authorizeRole(['buyer']), orderController.viewOrderHistory);
+router.get('/orders/history', authenticateToken, authorizeRole(['buyer','admin']), orderController.viewOrderHistory);
 
 
 

@@ -4,7 +4,7 @@ const Order = require('../models/order');
 const User = require('../models/user');
 const Product = require('../models/product');
 const OrderItems = require('../models/orderItems');
-const sendEmails = require('../utils/sendEmails');
+const sendOrderStatusUpdate = require('../utils/sendEmails');
 
 const { where } = require('sequelize');
 const sendVerification = require('../utils/sendEmails');
@@ -127,9 +127,11 @@ const orderDetails = async (req, res) => {
        }
 
        // Check if the user is authorized to view this order
-       if (loggedInUserRole !== 'admin' && checkOrder.buyer_id !== loggedInUser) {
-        return res.status(403).json(jsend('Fail', 'You are not authorized to view this order'));
-    }
+       if (loggedInUserRole !== 'admin') {
+        if (checkOrder.buyer_id !== loggedInUser) {
+            return res.status(403).json(jsend('Fail', 'You are not authorized to view this order'));
+        }
+      }
 
        // retrieve an order with its all items
        const retrieveOrder = await Order.findOne({
@@ -179,7 +181,7 @@ const updateOrderStatus = async (req, res) => {
     try {
       const orderId = req.params.id;
       const { newStatus } = req.body;
-      const allowedStatuses = ['pending', 'paid', 'shipped', 'delivered', 'cancelled', 'completed']
+      const allowedStatuses = ['pending', 'paid', 'shipped', 'delivered', 'cancelled']
 
       const normalizedNewStatus = newStatus.toLowerCase();
       
@@ -204,13 +206,16 @@ const updateOrderStatus = async (req, res) => {
       const orderAmount = updatedOrder.total_amount
       const orderOwner = updatedOrder.buyer_id
 
-     
+      if (updatedOrder.status === normalizedNewStatus) {
+        return res.status(400).json(jsend('Fail', `The order already has the status ${normalizedNewStatus}. No changes were made.`));
+      }
+   
       const getOrderOwner = await User.findOne({ orderOwner });
       const buyerEmail = getOrderOwner.email;
       const buyerNames = getOrderOwner.name;
 
       //send notification email
-      const sendEmail = sendEmails.sendOrderStatusUpdate(buyerEmail, buyerNames, normalizedNewStatus, orderId, orderDate, orderAmount)
+      const sendEmail = sendOrderStatusUpdate(buyerEmail, buyerNames, normalizedNewStatus, orderId, orderDate, orderAmount)
       if (!sendEmail) {
         return res.status(400).json(jsend('Fail', 'The order Status has been updated but notification not sent'));
       }
@@ -228,7 +233,25 @@ const viewOrderHistory = async (req, res) => {
     const loggedInUserId = req.user.id;
 
   try {
-    const orders = await Order.findAll({
+
+    let orders;
+    if (loggedInUserRole == 'admin') {
+       orders = await Order.findAll({
+        include: [
+          {
+            model: OrderItems,
+            as: 'orderItems',
+            include: [{
+              model: Product,
+              as: 'product',
+              attributes: ['product_name']
+            }]
+          }
+        ],
+        order: [['createdAt', 'DESC']]
+      });
+    }else{
+       orders = await Order.findAll({
         where: { buyer_id: loggedInUserId},
         include: [
           {
@@ -243,7 +266,8 @@ const viewOrderHistory = async (req, res) => {
         ],
         order: [['createdAt', 'DESC']]
       });
-
+    }
+    
       const formattedOrders = orders.map(order => {
         const orderItems = order.orderItems;
         const productCount = orderItems.length;
