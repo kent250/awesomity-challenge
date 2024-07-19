@@ -13,6 +13,7 @@ const createReview = async (req, res) => {
         const { productId, rating, comment } = req.body
         const loggedInUserId = req.user.id;
 
+
         //check if user has ordered that product before
         const checkProduct = await Order.findOne({
             where: {buyer_id: loggedInUserId, status: 'completed'},
@@ -24,7 +25,7 @@ const createReview = async (req, res) => {
         });
 
         if (!checkProduct) {
-            return res.status(403).json(jsend('Fail', 'You can only review products you have ordered.'))
+            return res.status(403).json(jsend('Fail', 'You can only review products you have ordered and have status completed'));
         }
 
         //check if user has reviewed the product before if so generate error
@@ -63,9 +64,10 @@ const createReview = async (req, res) => {
     }
 }
 
-//retrieve alll reviews for a product
+//retrieve all reviews for a product
 const retrieveReviews = async (req,res) => {
     const productId = req.params.productId;
+
     try {
         const retrieveReviews = await Review.findAll({ 
             where: {
@@ -80,15 +82,16 @@ const retrieveReviews = async (req,res) => {
                 as: 'user'
             }]
         });
-
-        if (!retrieveReviews) {
-            return res.status(500).json(jsend('Fail', 'There was an error retrieving reviews, try again later'))
+        // return res.json(retrieveReviews)
+        if (retrieveReviews.length === 0) {
+            return res.status(404).json(jsend('Success', 'There is no Reviews for this product'));
         }
         const formattedReviews = {
             productId: retrieveReviews[0].product.id,
             productName: retrieveReviews[0].product.product_name,
 
             review: retrieveReviews.map(review => ({
+                userId : review.user.id,
                 userNames: review.user.name,
                 rating: review.rating,
                 comment: review.comment

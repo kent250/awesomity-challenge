@@ -104,7 +104,100 @@ const { authenticateToken, authorizeRole } = require('../middlewares/auth');
  */
 router.post('/reviews', authenticateToken, authorizeRole(['buyer']), reviewController.createReview);
 
-//get reviews for a single product
+/**
+ * @swagger
+ * /api/reviews/product/{productId}:
+ *   get:
+ *     summary: Retrieve reviews for a specific product
+ *     tags: [Reviews]
+ *     description: Retrieves all reviews associated with a given product ID
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         description: Numeric ID of the product to get reviews for
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved product reviews or no reviews found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - $ref: '#/components/schemas/ReviewsFound'
+ *                 - $ref: '#/components/schemas/NoReviews'
+ *             examples:
+ *               reviewsFound:
+ *                 summary: Reviews found for the product
+ *                 value:
+ *                   status: Success
+ *                   message: Product reviews retrieved successfully
+ *                   data:
+ *                     productId: 1
+ *                     productName: updated product
+ *                     review:
+ *                       - userId: 8
+ *                         userNames: buyer2
+ *                         rating: 2
+ *                         comment: comment of the review
+ *               noReviews:
+ *                 summary: No reviews found for the product
+ *                 value:
+ *                   status: Success
+ *                   message: There is no Reviews for this product
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ * 
+ * components:
+ *   schemas:
+ *     ReviewsFound:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ *         message:
+ *           type: string
+ *         data:
+ *           type: object
+ *           properties:
+ *             productId:
+ *               type: integer
+ *             productName:
+ *               type: string
+ *             review:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   userId:
+ *                     type: integer
+ *                   userNames:
+ *                     type: string
+ *                   rating:
+ *                     type: integer
+ *                   comment:
+ *                     type: string
+ *     NoReviews:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ *         message:
+ *           type: string
+ *     Error:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ *         message:
+ *           type: string
+ */
 router.get('/reviews/product/:productId', reviewController.retrieveReviews);
+
 
 module.exports = router; 
