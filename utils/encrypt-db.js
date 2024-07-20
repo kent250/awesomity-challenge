@@ -25,3 +25,7 @@ function decrypt(text) {
 
 
 module.exports = { encrypt, decrypt };
+
+
+console.log(key)
+console.log(iv)
