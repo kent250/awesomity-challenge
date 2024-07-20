@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database.js');
+const { encrypt, decrypt } = require('../utils/encrypt-db.js');
 
 const User = sequelize.define('User', {
   name: {
@@ -11,9 +12,15 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
-    validate: {
-      isEmail: true,
+    get() {
+      const encryptedEmail = this.getDataValue('email');
+      const decryptedEmail = encryptedEmail ? decrypt(encryptedEmail) : null;
+      return decryptedEmail;
     },
+    set(value) {
+      const encryptedEmail = encrypt(value);
+      this.setDataValue('email', encryptedEmail);
+    }
   },
   password: {
     type: DataTypes.STRING,

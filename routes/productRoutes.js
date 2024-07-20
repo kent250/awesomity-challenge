@@ -749,7 +749,7 @@ router.get('/product/:id(\\d+)', productController.getSingleProductDetails);
 
 /**
  * @swagger
- * /api/products/search:
+ * /api/product/search:
  *   get:
  *     summary: Search for products based on various criteria
  *     tags: [Products]
