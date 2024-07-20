@@ -7,6 +7,7 @@ const jsend = require('../config/apiFormat');
 const { secret_key, expiration } = require('../config/jwt');
 const sendEmails = require('../utils/sendEmails');
 const validatePassword = require('../utils/passwordValidator');
+const { encrypt } = require('../utils/encrypt-db');
 
 
 const secrete_key = process.env.SECRET_KEY;
@@ -204,22 +205,29 @@ const verifyBuyerAccount = async (req, res) => {
 const login = async (req, res)=>{
         try {
           const { email, password } = req.body;
-          const user = await User.findOne({ where: { email } });
-      
+
+          //trim email for excess spaces
+          const trimmedEmail = email.trim();
+
+          //encryt  email for searching
+          const encryptedEmail = encrypt(trimmedEmail);
+
+          //searching email
+          const user = await User.findOne({ where: { email: encryptedEmail } });
           if (!user) {
             return res.status(422).json(jsend('Fail', 'User not found'));
           }
 
+          //compare password
           const isPasswordValid = await bcrypt.compare(password, user.password);
-      
           if (!isPasswordValid) {
             return res.status(401).json(jsend('Fail', 'Invalid password'));
           }
-      
-          // Include the user's role in the JWT
+
+          //Sign Jwt and include user's role in Token
           const token = jwt.sign({ id: user.id, name:user.name, email: user.email, role: user.role }, secret_key, { expiresIn: expiration });
-      
-          res.status(200).json(jsend('Success', 'Log in Successfully', { Token: token}));
+    
+           res.status(200).json(jsend('Success', 'Log in Successfully', { Token: token}));
         } catch (error) {
           res.status(500).json({ message: 'Error logging in', error: error.message });
         }
