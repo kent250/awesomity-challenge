@@ -3,6 +3,7 @@
 ## Table of Contents
 1. [Project Description and Overview](#project-description-and-overview)
 2. [Features](#features)
+3. [Technologies Used](#technologies-used)
 
 ## Project Description and Overview
 
@@ -67,8 +68,26 @@ Key aspects of the marketplace include:
 10. API Documentation
     - Swagger Open API
 
-12. Docker Support
+11. Docker Support
     - Containerized application for easy deployment and scaling
     - Docker Compose setup for managing multiple services
+    - 
+## Technologies Used
 
-These features create a robust and versatile online marketplace platform, catering to the needs of both sellers and buyers while ensuring scalability and security.
+### Backend Framework
+- Node.js
+- Express.js
+### Database
+- PostgreSQL
+### ORM (Object-Relational Mapping)
+- Sequelize
+### Authentication
+- JWT (JSON Web Tokens)
+- 
+### API Documentation
+- Swagger / OpenAPI 3.0
+### Containerization
+- Docker
+
+### Build Tool
+- npm (Node Package Manager)
