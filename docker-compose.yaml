@@ -1,0 +1,40 @@
+version: '3.9'
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: marketplace-app:latest
+    container_name: marketplace-app-container
+    ports:
+      - "${NODE_PORT}:${NODE_PORT}"
+    depends_on:
+      - db
+    env_file: 
+      - .env
+    environment:
+      - HOST=db
+    networks:
+      - marketplace-network
+
+  db:
+    image: postgres:16.3
+    container_name: marketplace-db-container
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - marketplace-network
+
+networks:
+  marketplace-network:
+    name: marketplace-network
+
+volumes:
+  postgres_data:
+    name: marketplace-postgres-data
