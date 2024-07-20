@@ -22,18 +22,23 @@ const registerAdmin = async (req, res) => {
           //trim email address
           const trimmedEmail = email.trim();
 
+
           //validate email given
           const validateEmail = validator.isEmail(trimmedEmail);
           if (!validateEmail) {
             return res.status(422).json(jsend('Fail', 'Please enter a valid email address.'));
           }
 
+          const encryptedEmail = encrypt(trimmedEmail);
+
           //check if there if email exists
           const emailExists = await User.findOne({
             where: {
-                email: trimmedEmail,
+              email: encryptedEmail
             }
           });
+
+          
           if (emailExists) {
             return res.status(422).json(jsend('Fail', 'The Email already registered!'));
         }
@@ -51,7 +56,7 @@ const registerAdmin = async (req, res) => {
         // Create a new user
         const newUser = await User.create({
           name,
-          email,
+          email: trimmedEmail,
           password:hashedPswd,
           role: 'admin',
           is_email_verified: true,
