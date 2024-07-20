@@ -71,7 +71,7 @@ Key aspects of the marketplace include:
 11. Docker Support
     - Containerized application for easy deployment and scaling
     - Docker Compose setup for managing multiple services
-    - 
+      
 ## Technologies Used
 
 ### Backend Framework
