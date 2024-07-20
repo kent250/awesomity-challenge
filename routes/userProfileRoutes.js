@@ -147,6 +147,79 @@ router.get('/profile', authenticateToken, userProfileController.profileDetails);
  */
 router.patch('/profile', authenticateToken, userProfileController.updateProfile);
 
+/**
+ * @swagger
+ * /api/user/allusers:
+ *   get:
+ *     summary: Retrieve all users
+ *     tags: [Users]
+ *     description: Retrieve a list of all users in the system. Accessible only by admins.
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "Success"
+ *                 message:
+ *                   type: string
+ *                   example: "Successfully returned Users"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       userId:
+ *                         type: integer
+ *                         example: 30
+ *                       Names:
+ *                         type: string
+ *                         example: "kent mars 2002"
+ *                       email:
+ *                         type: string
+ *                         example: "kentmars2002@gmail.com"
+ *                       role:
+ *                         type: string
+ *                         example: "buyer"
+ *                       joinDate:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2024-07-20T13:45:04.365Z"
+ *       404:
+ *         description: No users found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "Success"
+ *                 message:
+ *                   type: string
+ *                   example: "0 Users returned"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "Fail"
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ *                 error:
+ *                   type: string
+ *                   example: "Error details"
+ */
+
 router.get('/allusers',authenticateToken,authorizeRole(['admin']) ,userProfileController.getAllUsers);
 
 
