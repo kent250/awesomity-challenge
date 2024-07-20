@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 
-const algorithm = 'aes-256-cbc';
+const algorithm = process.env.ENCRYPTION_ALGORITHM;
 const key = Buffer.from(process.env.ENCRYPTION_KEY, 'hex');
 const iv = Buffer.from(process.env.ENCRYPTION_IV, 'hex');
 
