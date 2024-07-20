@@ -1,6 +1,7 @@
 const Product = require('../models/product');
 const Category = require('../models/category');
 const jsend = require('../config/apiFormat');
+const { Op } = require('sequelize');
 
 //new product
 const newProduct = async (req, res) => {
@@ -273,6 +274,66 @@ const getSingleProductDetails = async (req, res) =>{
     }
 }
 
+
+const searchProducts = async (req, res) => {
+    try {
+      const { name, category, minPrice, maxPrice } = req.query;
+  
+      // Build the search conditions dynamically
+      let searchConditions = {
+        where: {},
+        include: [{
+          model: Category,
+          as: 'category'
+        }]
+      };
+  
+      if (name) {
+        searchConditions.where.product_name = { [Op.like]: `%${name}%` };
+      }
+  
+      if (category) {
+        searchConditions.include[0].where = { name: { [Op.like]: `%${category}%` } };
+      }
+  
+      if (minPrice) {
+        searchConditions.where.price = { ...searchConditions.where.price, [Op.gte]: minPrice };
+      }
+  
+      if (maxPrice) {
+        searchConditions.where.price = { ...searchConditions.where.price, [Op.lte]: maxPrice };
+      }
+  
+      // Retrieve products based on search conditions
+      const products = await Product.findAll(searchConditions);
+  
+      // Check if products are found
+      if (!products.length) {
+        return res.status(200).json(jsend('Success', 'No products found matching your criteria'));
+      }
+  
+      // Format the response
+      const formattedProducts = products.map(product => ({
+        id: product.id,
+        product_name: product.product_name,
+        category: product.category.name,
+        description: product.description,
+        price: product.price,
+        stock_quantity: product.stock_quantity,
+        is_featured: product.is_featured,
+        createdAt: product.createdAt,
+        updatedAt: product.updatedAt,
+      }));
+  
+      // Send the response
+      return res.status(200).json(jsend('Success', 'Products retrieved successfully', formattedProducts));
+  
+    } catch (error) {
+      console.error('Internal server error:', error);
+      return res.status(500).json(jsend('Fail', 'Internal server error'));
+    }
+}
+
 module.exports = {
     newProduct,
     updateProduct,
@@ -280,5 +341,6 @@ module.exports = {
     makeProductFeatured,
     makeProductNotFeatured,
     productsByCategory,
-    getSingleProductDetails
+    getSingleProductDetails,
+    searchProducts
 }
