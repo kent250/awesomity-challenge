@@ -26,7 +26,7 @@ const { authenticateToken, authorizeRole } = require('../middlewares/auth');
  *   post:
  *     summary: Register a new admin account
  *     tags: [Authentication]
- *     description: Endpoint for registering new admin accounts. Requires appropriate authorization.
+ *     description: Endpoint for registering new admin accounts. doesnt need any authorization since its needed to set an admin account for starting.
  *     requestBody:
  *       required: true
  *       content:
