@@ -571,6 +571,7 @@ router.get('/product/category/:categoryId', productController.productsByCategory
  */
 router.put('/product/featured/:id', authenticateToken, authorizeRole(['admin']), productController.makeProductFeatured);
 
+
 /**
  * @swagger
  * /api/product/unfeatured/{id}:
@@ -664,6 +665,88 @@ router.put('/product/featured/:id', authenticateToken, authorizeRole(['admin']),
  */
 router.put('/product/unfeatured/:id', authenticateToken, authorizeRole(['admin']), productController.makeProductNotFeatured);
 
+/**
+ * @swagger
+ * /api/product/{id}:
+ *   get:
+ *     summary: Get details of a single product
+ *     tags: [Products]
+ *     description: Retrieve detailed information about a specific product by its ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the product to retrieve
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved product details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 product_name:
+ *                   type: string
+ *                 category_id:
+ *                   type: integer
+ *                 description:
+ *                   type: string
+ *                 price:
+ *                   type: number
+ *                 stock_quantity:
+ *                   type: integer
+ *                 is_featured:
+ *                   type: boolean
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 category:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     name:
+ *                       type: string
+ *                     description:
+ *                       type: string
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       404:
+ *         description: No Details for that product or product not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+
+router.get('/product/:id', productController.getSingleProductDetails);
 
 
 

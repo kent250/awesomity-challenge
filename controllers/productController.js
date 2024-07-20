@@ -246,11 +246,39 @@ const productsByCategory = async (req, res) => {
     }
 }
 
+const getSingleProductDetails = async (req, res) =>{
+    try {
+        const productId  = req.params.id;
+
+        //find product details
+
+        const retrieveProductDetails = await Product.findOne({
+            where: {
+                id: productId
+            },
+            include: [{
+                model: Category,
+                as: 'category'
+            }]
+        });
+
+        if (!retrieveProductDetails) {
+            return res.status(400).json(jsend('Success', 'No Details for that product or product not found'));
+        }
+        return res.status(200).json(jsend('Success', 'Product details retrieved successfully', retrieveProductDetails));
+
+    } catch (error) {
+         console.error('Internal server error:', error);
+        return res.status(500).json(jsend('Fail', 'Internal server error'));
+    }
+}
+
 module.exports = {
     newProduct,
     updateProduct,
     retrieveAllProducts,
     makeProductFeatured,
     makeProductNotFeatured,
-    productsByCategory
+    productsByCategory,
+    getSingleProductDetails
 }
