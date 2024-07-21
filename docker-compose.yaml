@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     image: marketplace-app:latest
-    container_name: marketplace-app-container
+    container_name: marketplace-API-container
     ports:
       - "${NODE_PORT}:${NODE_PORT}"
     depends_on:

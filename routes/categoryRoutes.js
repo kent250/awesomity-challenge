@@ -251,4 +251,5 @@ router.get('/category', categoryController.retrieveCategories);
 router.post('/category', authenticateToken, authorizeRole(['admin']),categoryController.newCategory);
 
 
+
 module.exports = router; 
