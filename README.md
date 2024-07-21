@@ -24,41 +24,49 @@ Key aspects of the marketplace include:
 
 ## Features
 
-1. **User Management**
-   - User registration with email verification for buyers
-   - Secure login system
-   - Profile management for users
-2. **Role-Based Access Control**
-   - Admin/Seller role: Full control over the marketplace
-   - Buyer role: Access to shopping and order management features
-3. **Product Management**
-   - Create, update, and delete products (Admin/Seller only)
-   - Categorize products for easy navigation
-   - Mark products as featured (Admin/Seller only)
-4. **Order Processing**
-   - Place orders (Buyers)
-   - View order history (Buyers see their own / Admin sees all users' orders)
-   - Track order status (buyers)
-5. **Search and Browse**
-   - Browse products by category
-   - Advanced search by optional category name, maximum price, and minimum price
-6. **Review and Rating System**
-   - Allow buyers to review and rate purchased products and order marked as complete
-   - Display reviews and comments on a particular product
-7. **Notifications**
-   - Email notifications for order status updates
-   - Email verification for new buyer account registration
-8. **Admin Controls**
-   - Manage users, products, orders, and categories
-9. **Security Features**
-   - JWT-based authentication
-   - Role-based authorization for API endpoints
-   - Encryption for sensitive data at rest
-10. **API Documentation**
-   - Swagger Open API
-11. **Docker Support**
-   - Containerized application for easy deployment and scaling
-   - Docker Compose setup for managing multiple services
+- **User Management**
+  - Registration with email verification for buyers
+  - Secure login and profile management
+
+- **Role-Based Access Control**
+  - Admin/Seller: Full control over marketplace
+  - Buyer: Shopping and order management access
+
+- **Product Management**
+  - Admin/seller can manage products
+  - Categorize and feature products
+
+- **Order Processing**
+  - Place and track orders
+  - View order history
+
+- **Search and Browse**
+  - Browse by category
+  - Advanced search (category, min price, max price, name)
+
+- **Review and Rating System**
+  - Rate and review purchased products with order completed
+  - Display reviews and comments as well review owners
+
+- **Notifications**
+  - Email notifications for orders
+  - Email verification for new accounts (buyers)
+
+- **Admin Controls**
+  - Manage users, products, orders, and categories
+
+- **Security Features**
+  - JWT-based authentication
+  - Role-based authorization
+  - Data encryption at rest
+
+- **API Documentation**
+  - Swagger Open API
+
+- **Docker Support**
+  - Containerized deployment
+  - Docker Compose for service management
+
 
 ## Technologies Used
 
