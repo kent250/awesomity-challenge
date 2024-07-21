@@ -37,6 +37,13 @@ syncModels().then(() => {
   app.use('/api', orderRoutes);
   app.use('/api', reviewRoutes);
 
+  app.get('/', (req, res) => {
+    res.send(`
+        <h1>Hello World</h1>
+        <p>This is the marketplace APIs.</p>
+        <p>Browse to <a href="/api-docs">this link</a> to view the API documentation.</p>
+    `);
+  });
 
   // Start the server
   app.listen(port, () => {

@@ -52,6 +52,7 @@ const retrieveCategories = async (req, res) => {
         res.status(500).json(jsend('Fail', 'There was an error retrieving all categories'));
     }
 }
+
  
 module.exports = {
      newCategory,
