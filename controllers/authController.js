@@ -92,12 +92,14 @@ const registerBuyer = async (req, res) => {
           return res.status(422).json(jsend('Fail', 'Please enter a valid email address.'));
         }
 
-        //check if there if email exists
-        const emailExists = await User.findOne({
-          where: {
-              email: trimmedEmail,
-          }
-        });
+        const encryptedEmail = encrypt(trimmedEmail);
+
+          //check if there if email exists
+          const emailExists = await User.findOne({
+            where: {
+              email: encryptedEmail
+            }
+          });
         if (emailExists) {
             return res.status(422).json(jsend('Fail', 'The Email already registered!'));
         }

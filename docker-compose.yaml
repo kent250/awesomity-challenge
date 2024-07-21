@@ -4,7 +4,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    image: marketplace-app:latest
+    image: kent250/marketplace-api:latest
     container_name: marketplace-API-container
     ports:
       - "${NODE_PORT}:${NODE_PORT}"

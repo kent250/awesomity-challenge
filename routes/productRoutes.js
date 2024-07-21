@@ -393,6 +393,86 @@ router.patch('/product/:id', authenticateToken, authorizeRole(['admin']), produc
  */
 router.get('/product/category/:categoryId', productController.productsByCategory);
 
+/**
+ * @swagger
+ * /api/product:
+ *   get:
+ *     summary: Retrieve all products
+ *     tags: [Products]
+ *     description: Retrieve a list of all products in the system.
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved products
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - type: object
+ *                   properties:
+ *                     status:
+ *                       type: string
+ *                       example: "Success"
+ *                     message:
+ *                       type: string
+ *                       example: "Products Retrieved Successfully"
+ *                     data:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                             example: 4
+ *                           product_name:
+ *                             type: string
+ *                             example: "White wine"
+ *                           category:
+ *                             type: string
+ *                             example: "Drinks"
+ *                           description:
+ *                             type: string
+ *                             example: "This is white wine"
+ *                           price:
+ *                             type: integer
+ *                             example: 40000
+ *                           stock_quantity:
+ *                             type: integer
+ *                             example: 10
+ *                           is_featured:
+ *                             type: boolean
+ *                             example: false
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2024-07-21T12:15:23.429Z"
+ *                           updatedAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2024-07-21T12:15:23.429Z"
+ *                 - type: object
+ *                   properties:
+ *                     status:
+ *                       type: string
+ *                       example: "Success"
+ *                     message:
+ *                       type: string
+ *                       example: "You have no products saved!!"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "Fail"
+ *                 message:
+ *                   type: string
+ *                   example: "Internal Server error"
+ */
+router.get('/product', productController.retrieveAllProducts);
+
 
 /**
  * @swagger
