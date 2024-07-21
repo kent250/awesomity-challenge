@@ -101,7 +101,7 @@ There are two ways to run this application: the standard method and using Docker
 1. Clone the repository:
 
     ```sh
-    git clone https://github.com/your-username/online-marketplace-api.git
+    git clone https://github.com/kent250/awesomity-challenge.git
     cd online-marketplace-api
     ```
 
