@@ -168,6 +168,7 @@ const orderDetails = async (req, res) => {
       const orderDetails = {
         order_id: retrieveOrder.id,
         order_date: retrieveOrder.createdAt,
+        order_status: retrieveOrder.status,
         total_amount: totalOrderAmount,
         items: itemsDetails
       };

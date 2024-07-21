@@ -8,7 +8,7 @@ const options = {
     info: {
       title: 'Awesomity Marketplace Challenge API',
       version: '1.0.0',
-      description: 'Online marketplace that allows users to buy and sell products, manage their inventory and process orders',
+      description: 'Online marketplace that allows the process of buying and selling of products and process orders',
     },
     components: {
       securitySchemes: {
