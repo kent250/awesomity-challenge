@@ -267,6 +267,7 @@ router.post('/orders/', authenticateToken, authorizeRole(['buyer']) , orderContr
  *                   data:
  *                     order_id: 12
  *                     order_date: "2024-07-19T08:38:58.000Z"
+ *                     order_status: "pending"
  *                     total_amount: 2000000
  *                     items:
  *                       - productId: 1
