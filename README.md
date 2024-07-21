@@ -7,6 +7,8 @@
 3. [Technologies Used](#technologies-used)
 4. [Getting Started](#getting-started)
 5. [API Documentation](#api-documentation)
+6. [API Endpoints](#api-endpoints)
+7. [Troubleshooting](#troubleshooting)
 
 ## Project Description and Overview
 
@@ -67,7 +69,6 @@ Key aspects of the marketplace include:
   - Containerized deployment
   - Docker Compose for service management
 
-
 ## Technologies Used
 
 - **Backend Frameworks:** Node.js, Express.js
@@ -84,10 +85,10 @@ There are two ways to run this application: the standard method and using Docker
 
 ### Environment Setup
 
-1. Rename the `.env.example` file to `.env`.
-2. Edit the `.env` file:
-   - For standard method: Set `HOST=localhost`.
-   - For Docker method: Set `HOST=db`.
+1. Rename the .env.example file to .env.
+2. Edit the .env file:
+   - For standard method: Set HOST=localhost.
+   - For Docker method: Set HOST=db.
 
 ### Option 1: Standard Method
 
@@ -113,7 +114,7 @@ There are two ways to run this application: the standard method and using Docker
 3. Set up PostgreSQL:
    - Ensure PostgreSQL 16 is installed and running.
    - Create a new server and database for the project.
-   - Edit the `.env` file to match your PostgreSQL credentials:
+   - Edit the .env file to match your PostgreSQL credentials:
 
     ```env
     HOST=localhost
@@ -131,7 +132,7 @@ There are two ways to run this application: the standard method and using Docker
     node app.js
     ```
 
-5. The API will be accessible at `http://localhost:3000`.
+5. The API will be accessible at [http://localhost:3000](http://localhost:3000).
 
 Note: The application uses Sequelize ORM, which will automatically create the necessary database tables on startup.
 
@@ -139,8 +140,8 @@ Note: The application uses Sequelize ORM, which will automatically create the ne
 
 This is a multi-container application using PostgreSQL 16.3 and Node.js 21-alpine.
 
-1. Navigate to the parent directory containing the `.env` and `docker-compose.yml` files.
-2. Set up the `.env` file as described in the Environment Setup section.
+1. Navigate to the parent directory containing the .env and docker-compose.yml files.
+2. Set up the .env file as described in the Environment Setup section.
 3. Run the following command:
 
     ```sh
@@ -152,13 +153,7 @@ This command will:
 - Pull the custom Node.js image from Docker Hub
 - Set up and run the containers
 
-4. The application will be available at `http://localhost:3000`.
-
-## API Documentation
-
-Once the application is running (using either method), you can access the Swagger documentation at:
-
-`http://localhost:3000/api-docs`
+4. The application will be available at [http://localhost:3000](http://localhost:3000).
 
 ## Troubleshooting
 
@@ -190,3 +185,119 @@ d. If problems persist, you can try rebuilding the containers:
     ```
 
 These commands should help ensure both the database and application containers start properly.
+
+## API Documentation
+
+Once the application is running (using either method), you can access the Swagger documentation at:
+
+[http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+
+## API Endpoints
+
+### Authentication
+
+- `POST /api/auth/register/admin`: Register a new admin account
+- `POST /api/auth/register/buyer`: Register a new buyer account
+- `POST /api/auth/login`: User login
+- `GET /api/auth/verify/buyer/{token}`: Verify buyer account
+
+### Category Management
+
+- `POST /api/category`: Create a new category
+- `GET /api/category`: Retrieve all categories
+
+### Order Management
+
+- `POST /api/orders/`: Create a new order
+- `GET /api/orders/{id}`: Retrieve details of a specific order
+- `PATCH /api/orders/{id}`: Update the status of an order
+- `GET /api/orders/history`: View order history
+
+### Product Management
+
+- `POST /api/product`: Create a new product
+- `GET /api/product`: Retrieve all products
+- `PATCH /api/product/{id}`: Update a product by ID
+- `GET /api/product/{id}`: Get details of a single product
+- `GET /api/product/category/{categoryId}`: Retrieve products by category
+- `PUT /api/product/featured/{id}`: Mark a product as featured
+- `PUT /api/product/unfeatured/{id}`: Remove featured status from a product
+- `GET /api/product/search`: Search for products based on various criteria
+
+### Product Reviews
+
+- `POST /api/reviews`: Create a new review
+- `GET /api/reviews/product/{productId}`: Retrieve reviews for a specific product
+
+### User Profile Management
+
+- `GET /api/user/profile`: Get user profile details
+- `PATCH /api/user/profile`: Update user profile
+
+### User Management (Admin)
+
+- `GET /api/user/allusers`: Retrieve all users
+
+For full details on request bodies, response formats, and authentication requirements, please refer to the Swagger documentation.
+
+## Database Schema
+
+### Entities
+
+1. **User**
+   - **Fields:** id, name, email (encrypted), password, role, is_email_verified
+   - **Roles:** buyer, admin
+
+2. **Category**
+   - **Fields:** id, name, description
+
+3. **Product**
+   - **Fields:** id, product_name, category_id, description, price, stock_quantity, is_featured
+
+4. **Order**
+   - **Fields:** id, buyer_id, status, total_amount
+   - **Status options:** pending, paid, shipped, delivered, cancelled, completed
+
+5. **OrderItems**
+   - **Fields:** id, order_id, product_id, quantity, unit_price
+
+6. **Review**
+   - **Fields:** id, product_id, order_id, buyer_id, rating, comment
+
+### Relationships
+
+1. **Product - Category**
+   - A Product belongs to one Category
+   - A Category can have many Products
+
+2. **User - Order**
+   - A User (as buyer) can have many Orders
+   - An Order belongs to one User (buyer)
+
+3. **Order - OrderItems**
+   - An Order can have many OrderItems
+   - An OrderItem belongs to one Order
+
+4. **OrderItems - Product**
+   - An OrderItem is associated with one Product
+   - A Product can be in many OrderItems
+
+5. **Review - User**
+   - A Review belongs to one User (buyer)
+   - A User can have many Reviews
+
+6. **Review - Product**
+   - A Review belongs to one Product
+   - A Product can have many Reviews
+
+7. **Review - Order**
+   - A Review is associated with one Order
+   - An Order can have many Reviews
+
+### Key Features
+
+- **Email encryption** for User data
+- **Cascading delete** for Orders and associated OrderItems
+- **Rating validation** for Reviews (0-5 range)
+- **Featured flag** for Products
+- **Email verification** status for Users
