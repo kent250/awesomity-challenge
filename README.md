@@ -102,7 +102,7 @@ There are two ways to run this application: the standard method and using Docker
 
     ```sh
     git clone https://github.com/kent250/awesomity-challenge.git
-    cd online-marketplace-api
+    cd awesomity-challenge
     ```
 
 2. Install dependencies:
