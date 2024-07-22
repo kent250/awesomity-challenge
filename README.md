@@ -5,10 +5,11 @@
 1. [Project Description and Overview](#project-description-and-overview)
 2. [Features](#features)
 3. [Technologies Used](#technologies-used)
-4. [Getting Started](#getting-started)
-5. [API Documentation](#api-documentation)
-6. [API Endpoints](#api-endpoints)
-7. [Troubleshooting](#troubleshooting)
+4. [System Design](#system-design)
+5. [Getting Started](#getting-started)
+6. [API Documentation](#api-documentation)
+7. [API Endpoints](#api-endpoints)
+8. [Troubleshooting](#troubleshooting)
 
 ## Project Description and Overview
 
@@ -78,6 +79,28 @@ Key aspects of the marketplace include:
 - **API Documentation:** Swagger / OpenAPI 3.0
 - **Containerization:** Docker
 - **Build Tool:** npm (Node Package Manager)
+
+## System Design
+
+### Overview
+The system uses an approach of containerizing to manage different aspects of the application. The architecture is divided into three main parts of containers:
+
+- **Parent Container**: This container houses the other two containers. It manages and organizes everything, ensuring all other containers work smoothly together.
+- **Application Container**: This container contains the business logic, including all the code and tools needed to process requests, perform business logic, and handle user requests.
+- **Database Container**: Houses the database system, managing data storage where, in our case, it’s PostgreSQL.
+
+### Architecture Diagram
+![System Architecture](system_design.jpg)
+
+### Request Process Flow
+1. **User Request**: The process begins with a user sending a request.
+2. **API Gateway**: The request goes through the API Gateway, which determines the appropriate controller to handle the request (e.g., product controller, review controller).
+3. **Middleware**: The request then passes through middleware, where factors like authentication and authorization are checked. This ensures that some resources are accessible to certain users and others are not.
+4. **Controller**: After passing through middleware, the request is sent to the relevant controller, which processes the business logic, such as updating product details.
+5. **External Services**: If the controller needs to interact with an external service (e.g., sending an email), it communicates with that external service as part of its processing.
+6. **Data Access Layer (DAL)**: If the controller needs to interact with the database, it communicates with the DAL using Sequelize. The DAL acts as a bridge between the business logic and the database.
+7. **Database Interaction**: The DAL performs the necessary operations on the database.
+8. **Response Formation**: Once database operations are complete, the DAL returns data to the controller, which forms a response and sends it back to the user.
 
 ## Getting Started
 
