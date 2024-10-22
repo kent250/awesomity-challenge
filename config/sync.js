@@ -7,7 +7,7 @@ const syncModels = async () => {
     
     setupAssociations();
     // dont drop and recreate the tables
-    await sequelize.sync({ force: false });
+    await sequelize.sync({ force: true });
     console.log('Database connected and models synchronized successfully.');
   } catch (error) {
     console.error('Unable to connect to the database:', error);

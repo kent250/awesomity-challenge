@@ -6,7 +6,7 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Awesomity Marketplace Challenge API',
+      title: 'Marketplace Challenge API',
       version: '1.0.0',
       description: 'Online marketplace that allows the process of buying and selling of products and process orders',
     },
