@@ -7,10 +7,13 @@ const sequelize = new Sequelize(process.env.DATABASE_NAME, process.env.DB_USER, 
   host: process.env.HOST,
   port: process.env.DB_PORT,
   dialect: 'postgres',
-  logging: false
-  // dialectOptions: {
-  //   ssl: process.env.NODE_ENV === 'production'
-  // }
+  logging: false,
+  dialectOptions: {
+    ssl: {
+      require: true, // This will enforce SSL
+      rejectUnauthorized: false, // 
+    }
+  }
 });
 
 const connectToDatabase = async () => {
